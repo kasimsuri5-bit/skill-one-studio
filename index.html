@@ -2,49 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AZEEM AI LABS - SKILL ONE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElevenLabs Premium | Azeem Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #0b0d11; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #16181d; padding: 40px; border-radius: 30px; width: 90%; max-width: 600px; text-align: center; border: 2px solid #ff6a00; box-shadow: 0 0 50px rgba(255,106,0,0.3); }
-        h1 { color: #ff6a00; font-style: italic; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
-        textarea { width: 100%; height: 200px; background: #000; color: #fff; border: 1px solid #333; border-radius: 20px; padding: 20px; font-size: 18px; outline: none; margin-bottom: 25px; box-sizing: border-box; resize: none; }
-        textarea:focus { border-color: #ff6a00; }
-        button { background: linear-gradient(45deg, #ff6a00, #ff9d00); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 20px; text-transform: uppercase; transition: 0.3s; }
-        button:hover { transform: scale(1.02); }
-        button:disabled { background: #444; }
-        audio { margin-top: 30px; width: 100%; display: none; filter: invert(1); }
+        body { background-color: #02040a; color: #e6edf3; font-family: 'Inter', sans-serif; }
+        .sidebar { background: #0d1117; border-right: 1px solid #30363d; }
+        .glass-card { background: #161b22; border: 1px solid #30363d; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn-primary { background: #5865f2; color: white; transition: 0.3s; }
+        .btn-primary:hover { background: #4752c4; transform: scale(1.02); }
+        .custom-textarea { background: transparent; border: none; outline: none; resize: none; font-size: 1.1rem; }
     </style>
 </head>
-<body>
-    <div class="card">
-        <h1>AZEEM AI LABS</h1>
-        <textarea id="inp" placeholder="Azeem bhai, apni script yahan likhein..."></textarea>
-        <button id="btn">GENERATE VOICE</button>
-        <audio id="aud" controls></audio>
-    </div>
-    <script>
-        const b = document.getElementById('btn'), a = document.getElementById('aud'), i = document.getElementById('inp');
-        // Aapki di hui nayi key yahan fit kar di hai
-        const K = "sk_2fadee327b439284aeaea4442f1361c949af88fb4321648a"; 
+<body class="flex h-screen overflow-hidden">
+    <aside class="w-72 sidebar p-8 flex flex-col">
+        <div class="flex items-center space-x-3 mb-12">
+            <div class="bg-indigo-600 p-2 rounded-xl"><i class="fas fa-microphone-alt"></i></div>
+            <h1 class="text-sm font-black uppercase tracking-widest text-white italic">Azeem Studio</h1>
+        </div>
+        <nav class="flex-1 space-y-4">
+            <button class="w-full text-left px-5 py-4 rounded-2xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center">
+                <i class="fas fa-sparkles mr-3"></i> Speech Synthesis
+            </button>
+            <button class="w-full text-left px-5 py-4 rounded-2xl text-gray-500 hover:bg-gray-800 text-[10px] font-black uppercase tracking-wider flex items-center">
+                <i class="fas fa-flask mr-3"></i> Voice Lab
+            </button>
+        </nav>
+        <div class="glass-card p-6 mt-auto">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[9px] font-black text-gray-500 uppercase">Credits Status</span>
+                <i class="fas fa-gem text-indigo-400"></i>
+            </div>
+            <div class="text-xl font-black text-white">👑 UNLIMITED</div>
+            <button class="w-full mt-4 py-3 border border-indigo-500/30 text-indigo-400 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white">Upgrade Pro</button>
+        </div>
+    </aside>
 
-        b.onclick = async () => {
-            if(!i.value) return alert("Pehle kuch likhein!");
-            b.disabled = true; b.innerText = "PROCESSING...";
-            try {
-                const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgnuMvkhW4A5", {
-                    method: "POST",
-                    headers: { "xi-api-key": K, "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: i.value, model_id: "eleven_multilingual_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } })
-                });
-                if(r.ok) {
-                    const blob = await r.blob();
-                    a.src = URL.createObjectURL(blob);
-                    a.style.display = "block";
-                    a.play();
-                } else { alert("Limit khatam ho gayi hai. Nayi Gmail se key banayein."); }
-            } catch(e) { alert("Internet check karein."); }
-            finally { b.disabled = false; b.innerText = "GENERATE VOICE"; }
-        };
-    </script>
+    <main class="flex-1 p-16 overflow-y-auto flex flex-col items-center">
+        <div class="w-full max-w-4xl space-y-10">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-4xl font-black tracking-tighter uppercase">Synthesis Master</h2>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[4px] mt-2">ElevenLabs Tier Technology</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-10">
+                <textarea class="w-full h-80 custom-textarea text-white" placeholder="Azeem bhai, ElevenLabs wala asli tool yahan live hai. 3000 words ki script likhein..."></textarea>
+                <div class="mt-10 pt-8 border-t border-gray-800 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                         <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-400 border border-white/10"><i class="fas fa-user"></i></div>
+                         <div>
+                             <p class="text-[10px] font-black uppercase text-gray-400">Selected Voice</p>
+                             <p class="text-xs font-bold text-white">Adam (Professional Narration)</p>
+                         </div>
+                    </div>
+                    <button class="btn-primary px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[2px]">Generate Audio</button>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
