@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Azeem AI Labs - Pro Studio</title>
+    <style>
+        body { background: #0b0d11; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #16181d; padding: 40px; border-radius: 24px; width: 90%; max-width: 650px; text-align: center; border: 1px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+        h1 { color: #ff6a00; font-style: italic; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
+        textarea { width: 100%; height: 220px; background: #000; color: #fff; border: 1px solid #444; border-radius: 15px; padding: 20px; font-size: 18px; outline: none; margin-bottom: 20px; box-sizing: border-box; }
+        button { background: linear-gradient(45deg, #ff6a00, #ff9d00); color: white; border: none; padding: 18px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 18px; text-transform: uppercase; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,106,0,0.3); }
+        audio { margin-top: 30px; width: 100%; display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>AZEEM AI LABS</h1>
+        <textarea id="scriptBox" placeholder="Urdu/English script yahan likhein..."></textarea>
+        <button id="genBtn">Generate Voice</button>
+        <audio id="audioPlayer" controls></audio>
+    </div>
+    <script>
+        const btn = document.getElementById('genBtn');
+        const player = document.getElementById('audioPlayer');
+        btn.onclick = async () => {
+            const text = document.getElementById('scriptBox').value;
+            if(!text) return alert("Script likhein!");
+            btn.innerText = "VOICE BAN RAHI HAI...";
+            try {
+                const res = await fetch("https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgnuMvkhW4A5", {
+                    method: "POST",
+                    headers: { "xi-api-key": "sk_85f7bf957ef6fdf54e25daba50ad2053a7092ca2929697d2", "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: text, model_id: "eleven_multilingual_v2" })
+                });
+                if(res.ok) {
+                    const blob = await res.blob();
+                    player.src = URL.createObjectURL(blob);
+                    player.style.display = "block";
+                    player.play();
+                } else { alert("API Error! Key check karein."); }
+            } catch(e) { alert("Internet error!"); }
+            finally { btn.innerText = "Generate Voice"; }
+        };
+    </script>
+</body>
+</html>
