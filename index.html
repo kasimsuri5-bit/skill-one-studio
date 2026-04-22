@@ -2,36 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AZEEM AI LABS - PRO STUDIO</title>
+    <title>AZEEM AI LABS - SKILL ONE</title>
     <style>
-        body { background: #0b0d11; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        body { background: #0b0d11; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: #16181d; padding: 40px; border-radius: 30px; width: 90%; max-width: 600px; text-align: center; border: 2px solid #ff6a00; box-shadow: 0 0 50px rgba(255,106,0,0.3); }
-        h1 { color: #ff6a00; font-style: italic; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; }
-        textarea { width: 100%; height: 220px; background: #000; color: #fff; border: 1px solid #444; border-radius: 20px; padding: 20px; font-size: 18px; outline: none; margin-bottom: 25px; box-sizing: border-box; resize: none; border: 1px solid #333; }
+        h1 { color: #ff6a00; font-style: italic; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
+        textarea { width: 100%; height: 200px; background: #000; color: #fff; border: 1px solid #333; border-radius: 20px; padding: 20px; font-size: 18px; outline: none; margin-bottom: 25px; box-sizing: border-box; resize: none; }
         textarea:focus { border-color: #ff6a00; }
-        button { background: linear-gradient(45deg, #ff6a00, #ff9d00); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 20px; text-transform: uppercase; transition: 0.4s; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        button:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255,106,0,0.4); }
-        button:disabled { background: #444; cursor: not-allowed; }
+        button { background: linear-gradient(45deg, #ff6a00, #ff9d00); color: white; border: none; padding: 18px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 20px; text-transform: uppercase; transition: 0.3s; }
+        button:hover { transform: scale(1.02); }
+        button:disabled { background: #444; }
         audio { margin-top: 30px; width: 100%; display: none; filter: invert(1); }
-        .loader { color: #888; margin-top: 15px; font-size: 14px; display: none; }
     </style>
 </head>
 <body>
     <div class="card">
         <h1>AZEEM AI LABS</h1>
-        <textarea id="inp" placeholder="Azeem bhai, apni news script yahan likhein..."></textarea>
+        <textarea id="inp" placeholder="Azeem bhai, apni script yahan likhein..."></textarea>
         <button id="btn">GENERATE VOICE</button>
-        <div id="ld" class="loader">Processing your professional voice...</div>
         <audio id="aud" controls></audio>
     </div>
     <script>
-        const b = document.getElementById('btn'), a = document.getElementById('aud'), i = document.getElementById('inp'), l = document.getElementById('ld');
-        // Final Fixed Key
-        const K = "sk_85f7bf957ef6fdf54e25daba50ad2053a7092ca2929697d2"; 
+        const b = document.getElementById('btn'), a = document.getElementById('aud'), i = document.getElementById('inp');
+        // Aapki di hui nayi key yahan fit kar di hai
+        const K = "sk_2fadee327b439284aeaea4442f1361c949af88fb4321648a"; 
 
         b.onclick = async () => {
-            if(!i.value) return alert("Pehle script likhein!");
-            b.disabled = true; b.innerText = "WORKING..."; l.style.display = "block";
+            if(!i.value) return alert("Pehle kuch likhein!");
+            b.disabled = true; b.innerText = "PROCESSING...";
             try {
                 const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgnuMvkhW4A5", {
                     method: "POST",
@@ -43,9 +41,9 @@
                     a.src = URL.createObjectURL(blob);
                     a.style.display = "block";
                     a.play();
-                } else { alert("API Error: Shayed credits khatam ho gaye hain."); }
-            } catch(e) { alert("Internet ka masla hai."); }
-            finally { b.disabled = false; b.innerText = "GENERATE VOICE"; l.style.display = "none"; }
+                } else { alert("Limit khatam ho gayi hai. Nayi Gmail se key banayein."); }
+            } catch(e) { alert("Internet check karein."); }
+            finally { b.disabled = false; b.innerText = "GENERATE VOICE"; }
         };
     </script>
 </body>
