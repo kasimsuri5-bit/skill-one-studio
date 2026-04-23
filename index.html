@@ -1,293 +1,110 @@
-YPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZEEM STUDIO - Professional AI Voice</title>
+    <title>AZEEM STUDIO | Microsoft Edge Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: #f8fafc; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-        .accent-gradient { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%); }
-        .loader { border-top-color: #f8fafc; animation: spinner 0.8s linear infinite; }
-        @keyframes spinner { to { transform: rotate(360deg); } }
-        .tab-active { border-bottom: 3px solid #6366f1; color: #f8fafc; }
-        input[type="file"]::file-selector-button {
-            background: #1e293b; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #334155; cursor: pointer; transition: 0.3s;
-        }
-        input[type="file"]::file-selector-button:hover { background: #334155; }
+        body { background: #050505; color: #f0f0f0; font-family: 'Inter', sans-serif; }
+        .sidebar { background: #000; border-right: 1px solid #222; min-height: 100vh; }
+        .glass-panel { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; border-radius: 24px; }
+        .btn-microsoft { background: linear-gradient(135deg, #0078d4 0%, #00bcff 100%); transition: 0.3s; font-weight: 800; }
+        .btn-microsoft:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 120, 212, 0.3); }
+        .voice-card { background: #111; border: 1px solid #222; padding: 15px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
+        .voice-card.active { border-color: #0078d4; background: rgba(0, 120, 212, 0.1); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 md:p-8">
+<body class="flex">
 
-    <!-- Header Section -->
-    <header class="w-full max-w-4xl flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 accent-gradient rounded-2xl flex items-center justify-center font-extrabold text-3xl shadow-2xl shadow-indigo-500/20">A</div>
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-tight">AZEEM STUDIO</h1>
-                <p class="text-indigo-400 text-sm font-semibold tracking-widest uppercase">Next-Gen Voice AI</p>
-            </div>
-        </div>
-        <div class="flex bg-slate-900/50 p-1 rounded-xl border border-slate-800 text-xs">
-             <div id="apiKeyIndicator" class="px-4 py-2 flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
-                <span class="text-slate-400">Verifying Key...</span>
-             </div>
-        </div>
-        <div class="flex bg-slate-900/50 p-1 rounded-xl border border-slate-800">
-            <button id="tabTts" class="px-6 py-2 rounded-lg font-bold text-slate-400 transition tab-active" onclick="switchTab('tts')">TTS</button>
-            <button id="tabClone" class="px-6 py-2 rounded-lg font-bold text-slate-400 transition" onclick="switchTab('clone')">Voice Lab</button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="w-full max-w-4xl glass rounded-[2.5rem] p-6 md:p-12 shadow-2xl relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 blur-[100px] -z-10"></div>
-        
-        <!-- TTS Section -->
-        <div id="ttsSection" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div class="space-y-2">
-                <label class="text-sm font-bold text-slate-400 uppercase tracking-wider">Speaker Selection</label>
-                <select id="voiceSelect" class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-indigo-500 transition-all text-lg">
-                    <option value="Kore">Kore (Smooth & Pro)</option>
-                    <option value="Zephyr">Zephyr (Deep & Narrative)</option>
-                    <option value="Puck">Puck (Cheerful & High Energy)</option>
-                    <option value="Charon">Charon (Classic Storyteller)</option>
-                    <option value="Leda">Leda (Soft & Calming)</option>
-                </select>
-            </div>
-            <div class="space-y-2">
-                <label class="text-sm font-bold text-slate-400 uppercase tracking-wider">Style / Mood</label>
-                <select id="styleSelect" class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-indigo-500 transition-all text-lg">
-                    <option value="Natural">Natural (Default)</option>
-                    <option value="Cheerful">Cheerful</option>
-                    <option value="Serious">Serious / Formal</option>
-                    <option value="Excited">Highly Excited</option>
-                    <option value="Whisper">Soft Whisper</option>
-                </select>
-            </div>
+    <div class="w-72 sidebar p-8 hidden md:flex flex-col">
+        <div class="mb-12">
+            <h1 class="text-3xl font-black italic tracking-tighter text-white uppercase">AZEEM STUDIO</h1>
+            <p class="text-[10px] text-blue-500 font-bold tracking-[4px] uppercase mt-1">Microsoft Engine</p>
         </div>
 
-        <!-- Clone Section -->
-        <div id="cloneSection" class="hidden mb-8 p-8 bg-indigo-500/5 border border-indigo-500/20 rounded-[2rem] space-y-4">
-            <div class="flex items-center gap-3 text-indigo-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                <h3 class="font-bold text-xl">Voice Lab (Instant Cloning)</h3>
+        <nav class="flex-1 space-y-4">
+            <div class="p-4 bg-blue-600/10 text-white rounded-xl border-l-4 border-blue-500 flex items-center gap-3">
+                <i class="fas fa-infinity"></i> <span class="font-bold">Unlimited Characters</span>
             </div>
-            <p class="text-slate-400">Upload a 10-30 second clean audio clip to clone that voice.</p>
-            <input type="file" id="voiceUpload" accept="audio/*" class="w-full text-slate-400">
-        </div>
-
-        <div class="mb-8">
-            <label class="block text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Input Text (Hindi, Urdu, English Support)</label>
-            <textarea id="textInput" class="w-full h-56 bg-slate-900/50 border border-slate-700 rounded-[1.5rem] p-6 outline-none focus:border-indigo-500 transition-all text-xl resize-none leading-relaxed shadow-inner" placeholder="Yahan apna text likhein ya paste karein...">Assalam-o-Alaikum! Azeem Studio mein khush amdeed. Hum aapke liye behtareen AI voice generate kar rahe hain.</textarea>
-            <div class="flex justify-between mt-3 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <span id="charCount">0 characters</span>
-                <span>Powered by Gemini 2.5 Flash</span>
+            <div class="p-4 text-gray-500 font-bold flex items-center gap-3">
+                <i class="fas fa-shield-alt"></i> No Key Needed
             </div>
-        </div>
+        </nav>
 
-        <div class="flex flex-col gap-8">
-            <button id="generateBtn" class="accent-gradient w-full py-5 rounded-2xl font-black text-2xl tracking-tight shadow-xl shadow-indigo-600/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4">
-                <span id="btnText">GENERATE VOICE</span>
-                <div id="btnLoader" class="hidden loader w-7 h-7 border-4 border-white/20 rounded-full"></div>
+        <div class="mt-auto p-5 glass-panel border-blue-900/30 text-center">
+            <p class="text-[9px] text-gray-500 font-bold mb-2 uppercase tracking-widest italic">Azeem Rana Admin</p>
+            <div class="text-xs font-black text-white">0326 6948481</div>
+        </div>
+    </div>
+
+    <main class="flex-1 p-6 md:p-12 overflow-y-auto">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-6xl font-black italic tracking-tighter uppercase text-white">Edge TTS</h2>
+                <div class="bg-blue-500/10 border border-blue-500/30 px-4 py-2 rounded-full">
+                    <span class="text-[10px] font-bold text-blue-500 uppercase tracking-[3px]">● High Fidelity</span>
+                </div>
+            </div>
+
+            <div class="glass-panel p-8 mb-8 shadow-2xl">
+                <textarea id="script" class="w-full h-80 bg-transparent text-gray-100 text-2xl leading-relaxed outline-none resize-none" placeholder="Azeem bhai, yahan apna lamba script likhein..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="voice-card active" id="v1" onclick="setVoice('ur-PK-UzmaNeural', 'v1')">
+                    <p class="font-bold text-sm">Uzma (Urdu)</p>
+                    <p class="text-[10px] text-gray-500 italic uppercase">News Female</p>
+                </div>
+                <div class="voice-card" id="v2" onclick="setVoice('ur-PK-AsadNeural', 'v2')">
+                    <p class="font-bold text-sm">Asad (Urdu)</p>
+                    <p class="text-[10px] text-gray-500 italic uppercase">News Male</p>
+                </div>
+                <div class="voice-card" id="v3" onclick="setVoice('hi-IN-SwaraNeural', 'v3')">
+                    <p class="font-bold text-sm">Swara (Hindi)</p>
+                    <p class="text-[10px] text-gray-500 italic uppercase">Clear Voice</p>
+                </div>
+                <div class="voice-card" id="v4" onclick="setVoice('en-US-AndrewNeural', 'v4')">
+                    <p class="font-bold text-sm">Andrew (Eng)</p>
+                    <p class="text-[10px] text-gray-500 italic uppercase">US Accent</p>
+                </div>
+            </div>
+
+            <button onclick="generateVoice()" id="btn" class="w-full btn-microsoft py-6 rounded-[24px] text-white uppercase tracking-[5px] font-black text-sm flex items-center justify-center gap-4">
+                <i class="fas fa-play"></i>
+                <span>Generate Unlimited Voice</span>
             </button>
 
-            <!-- Result Area -->
-            <div id="resultArea" class="hidden flex flex-col md:flex-row items-center gap-6 p-6 bg-slate-900/80 rounded-[1.5rem] border border-slate-700 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div class="w-full">
-                    <audio id="audioPlayer" controls class="w-full h-12"></audio>
-                </div>
-                <button id="downloadBtn" class="shrink-0 bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-indigo-50 transition-colors flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Save
-                </button>
-            </div>
-            
-            <div id="status"></div>
+            <div id="status" class="mt-8 text-center text-[11px] font-bold text-gray-600 tracking-[5px] uppercase">No API Key or Credits Required</div>
         </div>
     </main>
 
-    <footer class="mt-12 text-slate-500 text-sm font-medium">
-        &copy; 2024 AZEEM STUDIO. All rights reserved.
-    </footer>
-
     <script>
-        // API Configuration with strict checking
-        let apiKey = "";
-        const modelName = "gemini-2.5-flash-preview-09-2025";
+        let currentVoice = 'ur-PK-UzmaNeural';
 
-        const generateBtn = document.getElementById('generateBtn');
-        const btnText = document.getElementById('btnText');
-        const btnLoader = document.getElementById('btnLoader');
-        const textInput = document.getElementById('textInput');
-        const status = document.getElementById('status');
-        const resultArea = document.getElementById('resultArea');
-        const audioPlayer = document.getElementById('audioPlayer');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const charCount = document.getElementById('charCount');
-        const apiKeyIndicator = document.getElementById('apiKeyIndicator');
-
-        // Check for API key on load
-        window.onload = () => {
-            if (apiKey === "") {
-                apiKeyIndicator.innerHTML = `
-                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span class="text-green-400 font-bold">Key Ready</span>
-                `;
-            } else {
-                apiKeyIndicator.innerHTML = `
-                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                    <span class="text-red-400 font-bold">Key Missing</span>
-                `;
-            }
-        };
-        
-        let currentMode = 'tts';
-
-        function switchTab(mode) {
-            currentMode = mode;
-            document.getElementById('tabTts').classList.toggle('tab-active', mode === 'tts');
-            document.getElementById('tabClone').classList.toggle('tab-active', mode === 'clone');
-            document.getElementById('ttsSection').classList.toggle('hidden', mode === 'clone');
-            document.getElementById('cloneSection').classList.toggle('hidden', mode === 'tts');
+        function setVoice(v, id) {
+            currentVoice = v;
+            document.querySelectorAll('.voice-card').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        function pcmToWav(pcmData, sampleRate) {
-            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
-            const view = new DataView(buffer);
-            const writeString = (o, s) => { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); };
-            writeString(0, 'RIFF');
-            view.setUint32(4, 32 + pcmData.length * 2, true);
-            writeString(8, 'WAVE');
-            writeString(12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); 
-            view.setUint16(22, 1, true); 
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(36, 'data');
-            view.setUint32(40, pcmData.length * 2, true);
-            for (let i = 0; i < pcmData.length; i++) view.setInt16(44 + i * 2, pcmData[i], true);
-            return new Blob([buffer], { type: 'audio/wav' });
+        function generateVoice() {
+            const text = document.getElementById('script').value;
+            if(!text) return;
+
+            document.getElementById('status').innerText = "Processing via Microsoft Neural...";
+            
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = currentVoice.substring(0, 5);
+            speech.rate = 0.9;
+            
+            window.speechSynthesis.speak(speech);
+            
+            speech.onend = () => {
+                document.getElementById('status').innerText = "Voice Completed!";
+            };
         }
-
-        async function startGeneration(retries = 0) {
-            const text = textInput.value.trim();
-            if (!text) return;
-
-            generateBtn.disabled = true;
-            btnLoader.classList.remove('hidden');
-            btnText.innerText = "AZEEM STUDIO AI IS WORKING...";
-            status.innerHTML = "";
-            resultArea.classList.add('hidden');
-
-            try {
-                // Ensure the API call is constructed with the most fresh key available
-                const requestUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-                
-                const style = document.getElementById('styleSelect').value;
-                const voice = document.getElementById('voiceSelect').value;
-                
-                const payload = {
-                    contents: [{ 
-                        parts: [{ text: `Say this in a ${style} voice: ${text}` }] 
-                    }],
-                    generationConfig: {
-                        responseModalities: ["AUDIO"],
-                        speechConfig: {
-                            voiceConfig: {
-                                prebuiltVoiceConfig: { voiceName: voice }
-                            }
-                        }
-                    }
-                };
-
-                // Add cloning logic if applicable
-                const voiceUpload = document.getElementById('voiceUpload');
-                if (currentMode === 'clone' && voiceUpload.files[0]) {
-                    const reader = new FileReader();
-                    const audioBase64 = await new Promise((res) => {
-                        reader.onload = () => res(reader.result.split(',')[1]);
-                        reader.readAsDataURL(voiceUpload.files[0]);
-                    });
-                    
-                    payload.contents[0].parts.push({
-                        inlineData: {
-                            mimeType: voiceUpload.files[0].type,
-                            data: audioBase64
-                        }
-                    });
-                    delete payload.generationConfig.speechConfig;
-                }
-
-                const response = await fetch(requestUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error?.message || `Error ${response.status}`);
-                }
-
-                const audioData = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-                if (!audioData) throw new Error("Audio data generation failed.");
-
-                const binary = atob(audioData);
-                const bytes = new Uint8Array(binary.length);
-                for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-                
-                const pcm16 = new Int16Array(bytes.buffer);
-                const wavBlob = pcmToWav(pcm16, 24000);
-                const audioUrl = URL.createObjectURL(wavBlob);
-
-                audioPlayer.src = audioUrl;
-                resultArea.classList.remove('hidden');
-                audioPlayer.play().catch(e => console.log("Play blocked"));
-                
-                downloadBtn.onclick = () => {
-                    const a = document.createElement('a');
-                    a.href = audioUrl;
-                    a.download = `AzeemStudio_${Date.now()}.wav`;
-                    a.click();
-                };
-
-                status.innerHTML = `<div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl text-emerald-400 text-center font-bold">Done! Check player above.</div>`;
-
-            } catch (err) {
-                console.error("API Call failed:", err);
-                if (retries < 3) {
-                    const nextRetry = retries + 1;
-                    btnText.innerText = `Retrying (${nextRetry}/3)...`;
-                    setTimeout(() => startGeneration(nextRetry), 2000);
-                } else {
-                    status.innerHTML = `
-                        <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400 text-center">
-                            <strong>System Note:</strong> ${err.message}<br>
-                            <span class="text-xs opacity-70">Azeem, please ensure you are connected to the internet and try again.</span>
-                        </div>
-                    `;
-                }
-            } finally {
-                if (retries >= 3 || !resultArea.classList.contains('hidden')) {
-                    generateBtn.disabled = false;
-                    btnLoader.classList.add('hidden');
-                    btnText.innerText = "GENERATE VOICE";
-                }
-            }
-        }
-
-        generateBtn.onclick = () => startGeneration();
-        textInput.oninput = () => {
-            charCount.innerText = `${textInput.value.length} characters`;
-        };
     </script>
 </body>
 </html>
