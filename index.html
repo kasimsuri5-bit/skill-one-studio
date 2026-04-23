@@ -1,4 +1,4 @@
-TYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -79,16 +79,27 @@ TYPE html>
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <button id="generateBtn" class="w-full md:w-auto btn-gradient px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3">
-                <span id="btnText">Generate AI Voice</span>
-                <div id="btnLoader" class="hidden loader w-5 h-5 border-2 border-white rounded-full"></div>
-            </button>
-            
-            <div id="audioContainer" class="hidden items-center gap-4 bg-slate-900/80 p-3 rounded-2xl border border-slate-700 w-full md:w-auto shadow-xl">
-                <audio id="audioPlayer" controls class="h-10"></audio>
-                <button id="downloadBtn" class="p-3 bg-slate-800 rounded-xl hover:text-indigo-400 transition" title="Download">
+        <div class="flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <button id="generateBtn" class="w-full md:w-auto btn-gradient px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shrink-0">
+                    <span id="btnText">Generate AI Voice</span>
+                    <div id="btnLoader" class="hidden loader w-5 h-5 border-2 border-white rounded-full"></div>
+                </button>
+                
+                <div id="audioContainer" class="hidden items-center gap-4 bg-slate-900/80 p-3 rounded-2xl border border-slate-700 w-full shadow-xl">
+                    <audio id="audioPlayer" controls class="w-full h-10"></audio>
+                </div>
+            </div>
+
+            <!-- Dedicated Download Section -->
+            <div id="downloadSection" class="hidden border-t border-slate-700 pt-6 flex justify-between items-center bg-indigo-500/5 p-4 rounded-2xl">
+                <div>
+                    <p class="text-sm font-semibold text-white">Audio Ready</p>
+                    <p class="text-xs text-slate-400">High quality WAV format</p>
+                </div>
+                <button id="downloadBtn" class="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-indigo-400 rounded-xl font-bold transition shadow-lg border border-slate-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Audio
                 </button>
             </div>
         </div>
@@ -110,6 +121,7 @@ TYPE html>
         const audioContainer = document.getElementById('audioContainer');
         const audioPlayer = document.getElementById('audioPlayer');
         const downloadBtn = document.getElementById('downloadBtn');
+        const downloadSection = document.getElementById('downloadSection');
         const voiceUpload = document.getElementById('voiceUpload');
         const uploadStatus = document.getElementById('uploadStatus');
 
@@ -190,12 +202,12 @@ TYPE html>
             btnText.innerText = "Processing...";
             btnLoader.classList.remove('hidden');
             audioContainer.classList.add('hidden');
+            downloadSection.classList.add('hidden');
 
             try {
                 let payload = {};
                 
                 if (currentMode === 'clone' && voiceUpload.files[0]) {
-                    // Voice Cloning Mode using Gemini 2.5 Flash
                     const base64Audio = await fileToBase64(voiceUpload.files[0]);
                     payload = {
                         contents: [{
@@ -208,7 +220,6 @@ TYPE html>
                         model: "gemini-2.5-flash-preview-09-2025"
                     };
                 } else {
-                    // Standard TTS Mode
                     payload = {
                         contents: [{ parts: [{ text: `Say in a ${styleSelect.value} style: ${text}` }] }],
                         generationConfig: {
@@ -246,11 +257,13 @@ TYPE html>
                 audioPlayer.src = audioUrl;
                 audioContainer.classList.remove('hidden');
                 audioContainer.classList.add('flex');
+                downloadSection.classList.remove('hidden');
+                downloadSection.classList.add('flex');
                 
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
                     a.href = audioUrl;
-                    a.download = `clone-${Date.now()}.wav`;
+                    a.download = `voice-studio-${Date.now()}.wav`;
                     a.click();
                 };
 
