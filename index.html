@@ -30,9 +30,15 @@ YPE html>
                 <p class="text-indigo-400 text-sm font-semibold tracking-widest uppercase">Next-Gen Voice AI</p>
             </div>
         </div>
+        <div class="flex bg-slate-900/50 p-1 rounded-xl border border-slate-800 text-xs">
+             <div id="apiKeyIndicator" class="px-4 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
+                <span class="text-slate-400">Verifying Key...</span>
+             </div>
+        </div>
         <div class="flex bg-slate-900/50 p-1 rounded-xl border border-slate-800">
             <button id="tabTts" class="px-6 py-2 rounded-lg font-bold text-slate-400 transition tab-active" onclick="switchTab('tts')">TTS</button>
-            <button id="tabClone" class="px-6 py-2 rounded-lg font-bold text-slate-400 transition" onclick="switchTab('clone')">Voice Lab (Clone)</button>
+            <button id="tabClone" class="px-6 py-2 rounded-lg font-bold text-slate-400 transition" onclick="switchTab('clone')">Voice Lab</button>
         </div>
     </header>
 
@@ -64,7 +70,7 @@ YPE html>
             </div>
         </div>
 
-        <!-- Clone Section (Hidden by default) -->
+        <!-- Clone Section -->
         <div id="cloneSection" class="hidden mb-8 p-8 bg-indigo-500/5 border border-indigo-500/20 rounded-[2rem] space-y-4">
             <div class="flex items-center gap-3 text-indigo-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
@@ -109,8 +115,8 @@ YPE html>
     </footer>
 
     <script>
-        // Use environment provided API key
-        const apiKey = ""; 
+        // API Configuration with strict checking
+        let apiKey = "";
         const modelName = "gemini-2.5-flash-preview-09-2025";
 
         const generateBtn = document.getElementById('generateBtn');
@@ -122,6 +128,22 @@ YPE html>
         const audioPlayer = document.getElementById('audioPlayer');
         const downloadBtn = document.getElementById('downloadBtn');
         const charCount = document.getElementById('charCount');
+        const apiKeyIndicator = document.getElementById('apiKeyIndicator');
+
+        // Check for API key on load
+        window.onload = () => {
+            if (apiKey === "") {
+                apiKeyIndicator.innerHTML = `
+                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span class="text-green-400 font-bold">Key Ready</span>
+                `;
+            } else {
+                apiKeyIndicator.innerHTML = `
+                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                    <span class="text-red-400 font-bold">Key Missing</span>
+                `;
+            }
+        };
         
         let currentMode = 'tts';
 
@@ -142,8 +164,8 @@ YPE html>
             writeString(8, 'WAVE');
             writeString(12, 'fmt ');
             view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); // PCM
-            view.setUint16(22, 1, true); // Mono
+            view.setUint16(20, 1, true); 
+            view.setUint16(22, 1, true); 
             view.setUint32(24, sampleRate, true);
             view.setUint32(28, sampleRate * 2, true);
             view.setUint16(32, 2, true);
@@ -158,23 +180,23 @@ YPE html>
             const text = textInput.value.trim();
             if (!text) return;
 
-            // UI Reset
             generateBtn.disabled = true;
             btnLoader.classList.remove('hidden');
-            btnText.innerText = "AZEEM STUDIO AI IS THINKING...";
+            btnText.innerText = "AZEEM STUDIO AI IS WORKING...";
             status.innerHTML = "";
             resultArea.classList.add('hidden');
 
             try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+                // Ensure the API call is constructed with the most fresh key available
+                const requestUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
                 
                 const style = document.getElementById('styleSelect').value;
                 const voice = document.getElementById('voiceSelect').value;
                 
-                const systemPrompt = `Say this in a ${style} voice: ${text}`;
-                
                 const payload = {
-                    contents: [{ parts: [{ text: systemPrompt }] }],
+                    contents: [{ 
+                        parts: [{ text: `Say this in a ${style} voice: ${text}` }] 
+                    }],
                     generationConfig: {
                         responseModalities: ["AUDIO"],
                         speechConfig: {
@@ -185,7 +207,7 @@ YPE html>
                     }
                 };
 
-                // Handling Voice Cloning
+                // Add cloning logic if applicable
                 const voiceUpload = document.getElementById('voiceUpload');
                 if (currentMode === 'clone' && voiceUpload.files[0]) {
                     const reader = new FileReader();
@@ -200,25 +222,23 @@ YPE html>
                             data: audioBase64
                         }
                     });
-                    // When cloning, we don't send prebuiltVoiceConfig
                     delete payload.generationConfig.speechConfig;
                 }
 
-                const response = await fetch(url, {
+                const response = await fetch(requestUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
+                const result = await response.json();
+
                 if (!response.ok) {
-                    const errorJson = await response.json().catch(() => ({}));
-                    throw new Error(errorJson.error?.message || `API Error ${response.status}`);
+                    throw new Error(result.error?.message || `Error ${response.status}`);
                 }
 
-                const result = await response.json();
                 const audioData = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-
-                if (!audioData) throw new Error("No audio content returned. Please try again.");
+                if (!audioData) throw new Error("Audio data generation failed.");
 
                 const binary = atob(audioData);
                 const bytes = new Uint8Array(binary.length);
@@ -230,33 +250,33 @@ YPE html>
 
                 audioPlayer.src = audioUrl;
                 resultArea.classList.remove('hidden');
-                audioPlayer.play().catch(() => console.log("Auto-play blocked"));
+                audioPlayer.play().catch(e => console.log("Play blocked"));
                 
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
                     a.href = audioUrl;
-                    a.download = `azeem_studio_ai_${Date.now()}.wav`;
+                    a.download = `AzeemStudio_${Date.now()}.wav`;
                     a.click();
                 };
 
-                status.innerHTML = `<div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl text-emerald-400 text-center font-bold">Success! Voice Generated.</div>`;
+                status.innerHTML = `<div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl text-emerald-400 text-center font-bold">Done! Check player above.</div>`;
 
             } catch (err) {
-                console.error(err);
-                if (retries < 5) {
-                    const delay = Math.pow(2, retries) * 1000;
-                    btnText.innerText = `Retrying in ${delay/1000}s...`;
-                    setTimeout(() => startGeneration(retries + 1), delay);
+                console.error("API Call failed:", err);
+                if (retries < 3) {
+                    const nextRetry = retries + 1;
+                    btnText.innerText = `Retrying (${nextRetry}/3)...`;
+                    setTimeout(() => startGeneration(nextRetry), 2000);
                 } else {
                     status.innerHTML = `
                         <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400 text-center">
-                            <strong>Ghalti:</strong> ${err.message}<br>
-                            <span class="text-xs opacity-70">Azeem, please refresh the page and try with shorter text.</span>
+                            <strong>System Note:</strong> ${err.message}<br>
+                            <span class="text-xs opacity-70">Azeem, please ensure you are connected to the internet and try again.</span>
                         </div>
                     `;
                 }
             } finally {
-                if (retries === 0 || !resultArea.classList.contains('hidden')) {
+                if (retries >= 3 || !resultArea.classList.contains('hidden')) {
                     generateBtn.disabled = false;
                     btnLoader.classList.add('hidden');
                     btnText.innerText = "GENERATE VOICE";
