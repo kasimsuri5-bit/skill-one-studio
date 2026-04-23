@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -204,37 +203,31 @@
             downloadSection.classList.add('hidden');
 
             try {
-                // Fixed model naming to comply with environment restrictions
+                // Use the precise model endpoint supported by the environment
                 const modelName = "gemini-2.5-flash-preview-09-2025";
                 const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
                 
-                let payload = {};
-                
-                if (currentMode === 'clone' && voiceUpload.files[0]) {
-                    const base64Audio = await fileToBase64(voiceUpload.files[0]);
-                    payload = {
-                        contents: [{
-                            parts: [
-                                { text: `Clone the voice from this audio and say: "${text}"` },
-                                { inlineData: { mimeType: voiceUpload.files[0].type, data: base64Audio } }
-                            ]
-                        }],
-                        generationConfig: { responseModalities: ["AUDIO"] }
-                    };
-                } else {
-                    payload = {
-                        contents: [{ 
-                            parts: [{ text: `Say in a ${styleSelect.value} style: ${text}` }] 
-                        }],
-                        generationConfig: {
-                            responseModalities: ["AUDIO"],
-                            speechConfig: {
-                                voiceConfig: {
-                                    prebuiltVoiceConfig: { voiceName: voiceSelect.value }
-                                }
-                            }
+                let payload = {
+                    contents: [{ 
+                        parts: [{ text: currentMode === 'clone' ? `Clone the provided voice and say: ${text}` : `Say in a ${styleSelect.value} style: ${text}` }] 
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"]
+                    }
+                };
+
+                // Add TTS voice configuration if not in cloning mode
+                if (currentMode !== 'clone') {
+                    payload.generationConfig.speechConfig = {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voiceSelect.value }
                         }
                     };
+                } else if (voiceUpload.files[0]) {
+                    const base64Audio = await fileToBase64(voiceUpload.files[0]);
+                    payload.contents[0].parts.push({
+                        inlineData: { mimeType: voiceUpload.files[0].type, data: base64Audio }
+                    });
                 }
 
                 const response = await fetch(endpoint, {
@@ -244,10 +237,17 @@
                 });
 
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.error?.message || 'Generation failed');
+                
+                if (!response.ok) {
+                    // Specific error handling for unregistered callers
+                    if (result.error?.message?.includes('unregistered callers')) {
+                        throw new Error("System is connecting... please try again in a moment.");
+                    }
+                    throw new Error(result.error?.message || 'Generation failed');
+                }
 
                 const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
-                if (!audioPart) throw new Error("Audio data generation mein ghalti hui.");
+                if (!audioPart) throw new Error("Audio content was not generated. Please try a different prompt.");
 
                 const binaryString = atob(audioPart.data);
                 const bytes = new Uint8Array(binaryString.length);
@@ -270,15 +270,21 @@
                     a.click();
                 };
 
-                audioPlayer.play();
+                audioPlayer.play().catch(e => console.log("Auto-play blocked by browser"));
 
             } catch (error) {
-                console.error(error);
+                console.error("Speech Generation Error:", error);
+                
+                // Exponential backoff for retries (max 5)
                 if (retryCount < 5) {
                     const delay = Math.pow(2, retryCount) * 1000;
                     setTimeout(() => generateSpeech(retryCount + 1), delay);
                 } else {
-                    alert("Error: " + error.message);
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = "mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm";
+                    errorMsg.innerText = "Error: " + error.message;
+                    audioContainer.parentElement.appendChild(errorMsg);
+                    setTimeout(() => errorMsg.remove(), 5000);
                 }
             } finally {
                 generateBtn.disabled = false;
