@@ -3,104 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZEEM STUDIO | Instant Clone</title>
+    <title>AZEEM STUDIO | Pro Neural Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; }
-        .glass-card { background: #0a0a0a; border: 1px solid #222; border-radius: 30px; }
-        .upload-zone { border: 2px dashed #444; transition: 0.3s; cursor: pointer; }
-        .upload-zone:hover { border-color: #6366f1; background: #0f0f1a; }
-        .btn-premium { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); font-weight: 900; }
+        body { background: #020202; color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(15, 15, 15, 0.95); border: 1px solid #222; border-radius: 24px; }
+        .voice-card { background: #0a0a0a; border: 1px solid #222; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; border-left: 4px solid transparent; }
+        .voice-card:hover { background: #111; border-color: #3b82f6; }
+        .voice-card.active { border-left-color: #3b82f6; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; }
+        .btn-generate { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); font-weight: 900; letter-spacing: 2px; }
+        textarea { scrollbar-width: thin; scrollbar-color: #333 transparent; }
     </style>
 </head>
-<body class="p-6 md:p-12">
+<body class="p-4 md:p-10">
 
-    <div class="max-w-4xl mx-auto">
-        <div class="mb-10 text-center">
-            <h1 class="text-4xl font-black italic tracking-tighter">AZEEM STUDIO PRO</h1>
-            <p class="text-indigo-500 text-[10px] font-bold tracking-[5px] uppercase mt-2">Instant Voice Cloning Engine</p>
-        </div>
-
-        <div class="glass-card p-8 mb-8">
-            <h3 class="text-sm font-bold uppercase tracking-widest mb-4 text-gray-400">Step 1: Upload Your 1-Min Audio</h3>
-            <div class="upload-zone p-10 rounded-2xl text-center" id="dropZone">
-                <i class="fas fa-microphone-lines text-4xl text-indigo-500 mb-4"></i>
-                <p class="text-sm font-bold">Apni aawaz ki file yahan drop karein</p>
-                <input type="file" id="voiceFile" class="hidden" accept="audio/*">
-                <button onclick="document.getElementById('voiceFile').click()" class="mt-4 text-[10px] bg-white text-black px-4 py-2 rounded-lg font-black">SELECT FILE</button>
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-4xl font-black italic tracking-tighter text-white">AZEEM STUDIO PRO</h1>
+                <p class="text-[10px] text-blue-500 font-bold tracking-[5px] uppercase">Unlimited Microsoft Neural Engine</p>
+            </div>
+            <div class="text-right hidden md:block">
+                <p class="text-[10px] text-gray-500 font-bold uppercase italic">Pak Viral Network</p>
+                <p class="text-xs font-black text-white">0326 6948481</p>
             </div>
         </div>
 
-        <div class="glass-card p-8 mb-8">
-            <h3 class="text-sm font-bold uppercase tracking-widest mb-4 text-gray-400">Step 2: Enter Script</h3>
-            <textarea id="script" class="w-full h-40 bg-transparent text-xl outline-none resize-none" placeholder="Azeem bhai, ab jo bulwana hai wo likhein..."></textarea>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-1 space-y-3 overflow-y-auto max-h-[700px] pr-2">
+                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4">Select Asli Voice</h3>
+                
+                <div class="voice-card active" onclick="setV('ur-PK-UzmaNeural', this)">
+                    <p class="text-sm font-bold text-white">Uzma (Urdu)</p>
+                    <p class="text-[10px] text-blue-400 font-bold uppercase">Female / News Anchor</p>
+                </div>
+                <div class="voice-card" onclick="setV('ur-PK-AsadNeural', this)">
+                    <p class="text-sm font-bold text-white">Asad (Urdu)</p>
+                    <p class="text-[10px] text-blue-400 font-bold uppercase">Male / Documentary</p>
+                </div>
+
+                <div class="voice-card" onclick="setV('hi-IN-SwaraNeural', this)">
+                    <p class="text-sm font-bold text-white">Swara (Hindi)</p>
+                    <p class="text-[10px] text-orange-400 font-bold uppercase">Female / Soft</p>
+                </div>
+                <div class="voice-card" onclick="setV('hi-IN-MadhurNeural', this)">
+                    <p class="text-sm font-bold text-white">Madhur (Hindi)</p>
+                    <p class="text-[10px] text-orange-400 font-bold uppercase">Male / Deep Tone</p>
+                </div>
+                <div class="voice-card" onclick="setV('hi-IN-AaravNeural', this)">
+                    <p class="text-sm font-bold text-white">Aarav (Hindi)</p>
+                    <p class="text-[10px] text-orange-400 font-bold uppercase">Male / Young</p>
+                </div>
+
+                <div class="voice-card" onclick="setV('en-US-AndrewNeural', this)">
+                    <p class="text-sm font-bold text-white">Andrew (English)</p>
+                    <p class="text-[10px] text-green-400 font-bold uppercase">Male / US News</p>
+                </div>
+                <div class="voice-card" onclick="setV('en-US-AvaNeural', this)">
+                    <p class="text-sm font-bold text-white">Ava (English)</p>
+                    <p class="text-[10px] text-green-400 font-bold uppercase">Female / Professional</p>
+                </div>
+                <div class="voice-card" onclick="setV('en-GB-RyanNeural', this)">
+                    <p class="text-sm font-bold text-white">Ryan (English)</p>
+                    <p class="text-[10px] text-green-400 font-bold uppercase">Male / British Accent</p>
+                </div>
+                <div class="voice-card" onclick="setV('en-US-GuyNeural', this)">
+                    <p class="text-sm font-bold text-white">Guy (English)</p>
+                    <p class="text-[10px] text-green-400 font-bold uppercase">Male / Deep Story</p>
+                </div>
+                <div class="voice-card" onclick="setV('en-US-JennyNeural', this)">
+                    <p class="text-sm font-bold text-white">Jenny (English)</p>
+                    <p class="text-[10px] text-green-400 font-bold uppercase">Female / Friendly</p>
+                </div>
+
+                <div class="voice-card" onclick="setV('hi-IN-AnanyaNeural', this)">
+                    <p class="text-sm font-bold text-white">Ananya (Hindi)</p>
+                    <p class="text-[10px] text-purple-400 font-bold uppercase">Female / YouTube Style</p>
+                </div>
+                <div class="voice-card" onclick="setV('en-AU-NatashaNeural', this)">
+                    <p class="text-sm font-bold text-white">Natasha (English)</p>
+                    <p class="text-[10px] text-purple-400 font-bold uppercase">Female / Australian</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="glass-card p-6 mb-6">
+                    <textarea id="script" class="w-full h-[400px] bg-transparent text-gray-200 text-xl leading-relaxed outline-none resize-none" placeholder="Azeem bhai, yahan apna lamba script likhein..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Voice Speed</label>
+                        <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="1" class="w-full mt-2 accent-blue-500">
+                    </div>
+                    <div class="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Voice Pitch</label>
+                        <input type="range" id="pitch" min="0.5" max="1.5" step="0.1" value="1" class="w-full mt-2 accent-blue-500">
+                    </div>
+                </div>
+
+                <button onclick="speak()" id="btn" class="w-full btn-generate py-6 rounded-2xl text-white uppercase text-sm flex items-center justify-center gap-4">
+                    <i class="fas fa-play-circle text-xl"></i>
+                    <span>Generate Unlimited Neural Voice</span>
+                </button>
+                
+                <p id="status" class="mt-4 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest italic">Ready: Infinite Credits Available</p>
+            </div>
         </div>
-
-        <button onclick="cloneAndSpeak()" id="btn" class="w-full btn-premium py-6 rounded-2xl uppercase tracking-[5px] text-sm flex items-center justify-center gap-4">
-            <i class="fas fa-dna"></i>
-            <span>Clone & Generate Audio</span>
-        </button>
-
-        <div id="status" class="mt-6 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest italic">Ready to Clone...</div>
     </div>
 
     <script>
-        const API_KEY = "PASTE_YOUR_ELEVENLABS_KEY"; // Key yahan lagani hai
+        let currentVoice = 'ur-PK-UzmaNeural';
 
-        async function cloneAndSpeak() {
-            const fileInput = document.getElementById('voiceFile');
-            const script = document.getElementById('script').value;
+        function setV(voice, el) {
+            currentVoice = voice;
+            document.querySelectorAll('.voice-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function speak() {
+            const text = document.getElementById('script').value;
+            const rate = document.getElementById('rate').value;
+            const pitch = document.getElementById('pitch').value;
             const btn = document.getElementById('btn');
-            const status = document.getElementById('status');
 
-            if (!fileInput.files[0] || !script) {
-                alert("Azeem bhai, pehle file aur script dono check kar lein!");
-                return;
-            }
+            if(!text) { alert("Azeem bhai, script likhein!"); return; }
 
             btn.disabled = true;
-            status.innerText = "Step 1: Cloning Your Voice (Uploading)...";
+            document.getElementById('status').innerText = "Processing via Neural Cloud...";
 
-            try {
-                // 1. Voice Clone karne ka API Call
-                const formData = new FormData();
-                formData.append('name', 'Azeem Clone');
-                formData.append('files', fileInput.files[0]);
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = currentVoice.substring(0, 5);
+            speech.rate = rate;
+            speech.pitch = pitch;
 
-                const addVoiceRes = await fetch('https://api.elevenlabs.io/v1/voices/add', {
-                    method: 'POST',
-                    headers: { 'xi-api-key': API_KEY },
-                    body: formData
-                });
+            window.speechSynthesis.speak(speech);
 
-                const voiceData = await addVoiceRes.json();
-                const voiceId = voiceData.voice_id;
-
-                status.innerText = "Step 2: Generating Speech in Your Voice...";
-
-                // 2. Us voice ID se text bolne ka API Call
-                const ttsRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-                    method: 'POST',
-                    headers: {
-                        'xi-api-key': API_KEY,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ text: script })
-                });
-
-                const audioBlob = await ttsRes.blob();
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const audio = new Audio(audioUrl);
-                audio.play();
-
-                status.innerText = "Done! Audio Generated.";
-            } catch (e) {
-                status.innerText = "Error: Key expired or invalid file.";
-                console.error(e);
-            } finally {
+            speech.onend = () => {
                 btn.disabled = false;
-            }
+                document.getElementById('status').innerText = "Voice Generation Complete!";
+            };
         }
     </script>
 </body>
