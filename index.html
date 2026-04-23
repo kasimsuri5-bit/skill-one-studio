@@ -124,7 +124,7 @@
         const voiceUpload = document.getElementById('voiceUpload');
         const uploadStatus = document.getElementById('uploadStatus');
 
-        // Tab Switching
+        // Tab Switching logic
         const ttsBtn = document.getElementById('tabTts');
         const cloneBtn = document.getElementById('tabClone');
         const ttsSection = document.getElementById('ttsSection');
@@ -157,6 +157,7 @@
             document.getElementById('charCount').innerText = `${textInput.value.length} / 5000 characters`;
         });
 
+        // Robust PCM to WAV conversion for Gemini 2.5 24kHz output
         function pcmToWav(pcmData, sampleRate) {
             const buffer = new ArrayBuffer(44 + pcmData.length * 2);
             const view = new DataView(buffer);
@@ -168,8 +169,8 @@
             writeString(8, 'WAVE');
             writeString(12, 'fmt ');
             view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true);
+            view.setUint16(20, 1, true); // PCM format
+            view.setUint16(22, 1, true); // Mono
             view.setUint32(24, sampleRate, true);
             view.setUint32(28, sampleRate * 2, true);
             view.setUint16(32, 2, true);
@@ -205,24 +206,26 @@
 
             try {
                 let payload = {};
-                let endpoint = "";
+                // Using the specific model supported by the environment for speech generation
+                const model = currentMode === 'clone' ? "gemini-2.5-flash-preview-09-2025" : "gemini-2.5-flash-preview-tts";
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
                 
                 if (currentMode === 'clone' && voiceUpload.files[0]) {
                     const base64Audio = await fileToBase64(voiceUpload.files[0]);
-                    endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent";
                     payload = {
                         contents: [{
                             parts: [
-                                { text: `Voice clone: mimic this voice to say: "${text}"` },
+                                { text: `Listen carefully to the voice in the provided audio. Now, clone this exact voice and speak this text: "${text}"` },
                                 { inlineData: { mimeType: voiceUpload.files[0].type, data: base64Audio } }
                             ]
                         }],
                         generationConfig: { responseModalities: ["AUDIO"] }
                     };
                 } else {
-                    endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent";
                     payload = {
-                        contents: [{ parts: [{ text: `Say in a ${styleSelect.value} style: ${text}` }] }],
+                        contents: [{ 
+                            parts: [{ text: `Say in a ${styleSelect.value} style: ${text}` }] 
+                        }],
                         generationConfig: {
                             responseModalities: ["AUDIO"],
                             speechConfig: {
@@ -234,7 +237,7 @@
                     };
                 }
 
-                const response = await fetch(`${endpoint}?key=${apiKey}`, {
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -243,8 +246,9 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error?.message || 'Generation failed');
 
+                // Extract audio from the response candidate parts
                 const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
-                if (!audioPart) throw new Error("No audio data returned from AI");
+                if (!audioPart) throw new Error("No audio data returned. Try checking the text or style.");
 
                 const binaryString = atob(audioPart.data);
                 const bytes = new Uint8Array(binaryString.length);
@@ -267,13 +271,17 @@
                     a.click();
                 };
 
+                // Auto-play the preview
+                audioPlayer.play();
+
             } catch (error) {
                 console.error(error);
+                // Implementation of exponential backoff for retries
                 if (retryCount < 5) {
                     const delay = Math.pow(2, retryCount) * 1000;
                     setTimeout(() => generateSpeech(retryCount + 1), delay);
                 } else {
-                    alert("Error: " + error.message);
+                    alert("Ghalti: " + error.message);
                 }
             } finally {
                 generateBtn.disabled = false;
