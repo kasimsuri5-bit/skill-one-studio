@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +18,6 @@
 </head>
 <body class="min-h-screen flex flex-col items-center p-4 md:p-10">
 
-    <!-- Header -->
     <header class="w-full max-w-4xl flex justify-between items-center mb-8">
         <div class="flex items-center gap-2">
             <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">V</div>
@@ -31,7 +31,6 @@
 
     <main class="w-full max-w-4xl glass rounded-3xl p-6 md:p-10 shadow-2xl">
         
-        <!-- TTS Section -->
         <div id="ttsSection">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
@@ -57,27 +56,24 @@
             </div>
         </div>
 
-        <!-- Voice Cloning Section -->
         <div id="cloneSection" class="hidden">
             <div class="mb-8 p-6 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl">
                 <h3 class="text-indigo-400 font-bold mb-2 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
                     Voice Cloning (Instant)
                 </h3>
-                <p class="text-slate-400 text-sm mb-4">Kisi bhi voice ka 10-30 second ka sample upload karein.</p>
+                <p class="text-slate-400 text-sm mb-4">Kisi bhi voice ka audio sample upload karein.</p>
                 <input type="file" id="voiceUpload" accept="audio/*" class="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
                 <div id="uploadStatus" class="mt-2 text-xs text-indigo-300 hidden">Sample load ho gaya!</div>
             </div>
         </div>
 
-        <!-- Shared Text Input -->
         <div class="mb-8">
             <label class="block text-sm font-medium text-slate-300 mb-2">Text Enter Karein</label>
             <textarea id="textInput" placeholder="Yahan apna text likhein..." class="w-full h-48 bg-slate-800 border border-slate-700 rounded-2xl p-6 outline-none focus:border-indigo-500 transition resize-none text-lg">Hello! VoiceStudio Pro mein aapka swagat hai. Kya aap aaj koi naya voice generate karna chahte hain?</textarea>
             <div class="mt-2 text-right text-xs text-slate-500" id="charCount">0 / 5000 characters</div>
         </div>
 
-        <!-- Actions -->
         <div class="flex flex-col gap-6">
             <div class="flex flex-col md:flex-row gap-4 items-center">
                 <button id="generateBtn" class="w-full md:w-auto btn-gradient px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shrink-0">
@@ -90,23 +86,18 @@
                 </div>
             </div>
 
-            <!-- Dedicated Download Section -->
             <div id="downloadSection" class="hidden border-t border-slate-700 pt-6 flex justify-between items-center bg-indigo-500/5 p-4 rounded-2xl">
                 <div>
                     <p class="text-sm font-semibold text-white">Audio Taiyar Hai</p>
-                    <p class="text-xs text-slate-400">High quality WAV format</p>
+                    <p class="text-xs text-slate-400">WAV Format</p>
                 </div>
                 <button id="downloadBtn" class="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-indigo-400 rounded-xl font-bold transition shadow-lg border border-slate-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download Audio
+                    Download
                 </button>
             </div>
+            <div id="errorArea"></div>
         </div>
     </main>
-
-    <footer class="mt-12 text-slate-500 text-sm text-center">
-        <p>Premium AI Voice Studio & Clone Engine</p>
-    </footer>
 
     <script>
         const apiKey = ""; 
@@ -122,8 +113,8 @@
         const downloadSection = document.getElementById('downloadSection');
         const voiceUpload = document.getElementById('voiceUpload');
         const uploadStatus = document.getElementById('uploadStatus');
+        const errorArea = document.getElementById('errorArea');
 
-        // Tab Switching
         const ttsBtn = document.getElementById('tabTts');
         const cloneBtn = document.getElementById('tabClone');
         const ttsSection = document.getElementById('ttsSection');
@@ -147,13 +138,7 @@
         };
 
         voiceUpload.addEventListener('change', () => {
-            if (voiceUpload.files.length > 0) {
-                uploadStatus.classList.remove('hidden');
-            }
-        });
-
-        textInput.addEventListener('input', () => {
-            document.getElementById('charCount').innerText = `${textInput.value.length} / 5000 characters`;
+            if (voiceUpload.files.length > 0) uploadStatus.classList.remove('hidden');
         });
 
         function pcmToWav(pcmData, sampleRate) {
@@ -201,22 +186,22 @@
             btnLoader.classList.remove('hidden');
             audioContainer.classList.add('hidden');
             downloadSection.classList.add('hidden');
+            errorArea.innerHTML = "";
 
             try {
-                // Use the precise model endpoint supported by the environment
+                // Sahi model use karna zaruri hai environment compatibility ke liye
                 const modelName = "gemini-2.5-flash-preview-09-2025";
                 const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
                 
                 let payload = {
                     contents: [{ 
-                        parts: [{ text: currentMode === 'clone' ? `Clone the provided voice and say: ${text}` : `Say in a ${styleSelect.value} style: ${text}` }] 
+                        parts: [{ text: currentMode === 'clone' ? `Act as a professional voice cloner. Listen to the provided sample and say this text exactly: ${text}` : `Say in a ${styleSelect.value} style: ${text}` }] 
                     }],
                     generationConfig: {
                         responseModalities: ["AUDIO"]
                     }
                 };
 
-                // Add TTS voice configuration if not in cloning mode
                 if (currentMode !== 'clone') {
                     payload.generationConfig.speechConfig = {
                         voiceConfig: {
@@ -239,15 +224,11 @@
                 const result = await response.json();
                 
                 if (!response.ok) {
-                    // Specific error handling for unregistered callers
-                    if (result.error?.message?.includes('unregistered callers')) {
-                        throw new Error("System is connecting... please try again in a moment.");
-                    }
                     throw new Error(result.error?.message || 'Generation failed');
                 }
 
                 const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
-                if (!audioPart) throw new Error("Audio content was not generated. Please try a different prompt.");
+                if (!audioPart) throw new Error("Audio generate nahi ho saka. Text chota karke dekhein.");
 
                 const binaryString = atob(audioPart.data);
                 const bytes = new Uint8Array(binaryString.length);
@@ -266,25 +247,19 @@
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
                     a.href = audioUrl;
-                    a.download = `voice-studio-${Date.now()}.wav`;
+                    a.download = `audio-${Date.now()}.wav`;
                     a.click();
                 };
 
-                audioPlayer.play().catch(e => console.log("Auto-play blocked by browser"));
+                audioPlayer.play();
 
             } catch (error) {
-                console.error("Speech Generation Error:", error);
-                
-                // Exponential backoff for retries (max 5)
+                console.error(error);
                 if (retryCount < 5) {
                     const delay = Math.pow(2, retryCount) * 1000;
                     setTimeout(() => generateSpeech(retryCount + 1), delay);
                 } else {
-                    const errorMsg = document.createElement('div');
-                    errorMsg.className = "mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm";
-                    errorMsg.innerText = "Error: " + error.message;
-                    audioContainer.parentElement.appendChild(errorMsg);
-                    setTimeout(() => errorMsg.remove(), 5000);
+                    errorArea.innerHTML = `<div class="p-3 bg-red-500/20 text-red-200 rounded-xl text-sm border border-red-500/50 mt-4">Ghalti: ${error.message}</div>`;
                 }
             } finally {
                 generateBtn.disabled = false;
