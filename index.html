@@ -3,147 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZEEM STUDIO | Pro Neural Engine</title>
+    <title>AZEEM STUDIO | True Neural</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #020202; color: #f3f4f6; font-family: 'Inter', sans-serif; }
-        .glass-card { background: rgba(15, 15, 15, 0.95); border: 1px solid #222; border-radius: 24px; }
-        .voice-card { background: #0a0a0a; border: 1px solid #222; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; border-left: 4px solid transparent; }
-        .voice-card:hover { background: #111; border-color: #3b82f6; }
-        .voice-card.active { border-left-color: #3b82f6; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; }
-        .btn-generate { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); font-weight: 900; letter-spacing: 2px; }
-        textarea { scrollbar-width: thin; scrollbar-color: #333 transparent; }
+        body { background: #020202; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(15, 15, 15, 0.98); border: 1px solid #333; border-radius: 30px; }
+        .v-card { background: #0a0a0a; border: 1px solid #222; transition: 0.3s; cursor: pointer; border-radius: 15px; position: relative; overflow: hidden; }
+        .v-card:hover { border-color: #3b82f6; transform: scale(1.02); }
+        .v-card.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.15); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .v-card.active::after { content: 'SELECTED'; position: absolute; top: 5px; right: 8px; font-size: 7px; font-weight: 900; color: #3b82f6; letter-spacing: 1px; }
+        .btn-main { background: linear-gradient(135deg, #1d4ed8, #3b82f6); font-weight: 900; transition: 0.3s; }
+        .btn-main:hover { letter-spacing: 3px; box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
             <div>
-                <h1 class="text-4xl font-black italic tracking-tighter text-white">AZEEM STUDIO PRO</h1>
-                <p class="text-[10px] text-blue-500 font-bold tracking-[5px] uppercase">Unlimited Microsoft Neural Engine</p>
+                <h1 class="text-4xl font-black italic tracking-tighter uppercase">AZEEM STUDIO</h1>
+                <p class="text-[10px] text-blue-500 font-bold tracking-[6px]">PAK VIRAL NETWORK | NEURAL LAB</p>
             </div>
-            <div class="text-right hidden md:block">
-                <p class="text-[10px] text-gray-500 font-bold uppercase italic">Pak Viral Network</p>
-                <p class="text-xs font-black text-white">0326 6948481</p>
+            <div class="text-right">
+                <span class="text-[10px] bg-blue-500/10 text-blue-500 border border-blue-500/20 px-3 py-1 rounded-full font-bold">● ENGINE ACTIVE</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <div class="lg:col-span-1 space-y-3 overflow-y-auto max-h-[700px] pr-2">
-                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4">Select Asli Voice</h3>
+            <div class="lg:col-span-4 grid grid-cols-1 gap-3 overflow-y-auto max-h-[750px] pr-4 custom-scroll">
+                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Neural Voice Library</h3>
                 
-                <div class="voice-card active" onclick="setV('ur-PK-UzmaNeural', this)">
-                    <p class="text-sm font-bold text-white">Uzma (Urdu)</p>
-                    <p class="text-[10px] text-blue-400 font-bold uppercase">Female / News Anchor</p>
+                <div class="v-card active p-4" onclick="setV('ur-PK-UzmaNeural', this)">
+                    <p class="font-bold text-sm">Uzma (Urdu)</p>
+                    <p class="text-[9px] text-gray-400 italic">Smooth News Anchor - Female</p>
                 </div>
-                <div class="voice-card" onclick="setV('ur-PK-AsadNeural', this)">
-                    <p class="text-sm font-bold text-white">Asad (Urdu)</p>
-                    <p class="text-[10px] text-blue-400 font-bold uppercase">Male / Documentary</p>
-                </div>
-
-                <div class="voice-card" onclick="setV('hi-IN-SwaraNeural', this)">
-                    <p class="text-sm font-bold text-white">Swara (Hindi)</p>
-                    <p class="text-[10px] text-orange-400 font-bold uppercase">Female / Soft</p>
-                </div>
-                <div class="voice-card" onclick="setV('hi-IN-MadhurNeural', this)">
-                    <p class="text-sm font-bold text-white">Madhur (Hindi)</p>
-                    <p class="text-[10px] text-orange-400 font-bold uppercase">Male / Deep Tone</p>
-                </div>
-                <div class="voice-card" onclick="setV('hi-IN-AaravNeural', this)">
-                    <p class="text-sm font-bold text-white">Aarav (Hindi)</p>
-                    <p class="text-[10px] text-orange-400 font-bold uppercase">Male / Young</p>
+                <div class="v-card p-4" onclick="setV('ur-PK-AsadNeural', this)">
+                    <p class="font-bold text-sm">Asad (Urdu)</p>
+                    <p class="text-[9px] text-gray-400 italic">Deep Documentary - Male</p>
                 </div>
 
-                <div class="voice-card" onclick="setV('en-US-AndrewNeural', this)">
-                    <p class="text-sm font-bold text-white">Andrew (English)</p>
-                    <p class="text-[10px] text-green-400 font-bold uppercase">Male / US News</p>
+                <div class="v-card p-4" onclick="setV('hi-IN-SwaraNeural', this)">
+                    <p class="font-bold text-sm">Swara (Hindi)</p>
+                    <p class="text-[9px] text-orange-500 italic">Soft Storyteller - Female</p>
                 </div>
-                <div class="voice-card" onclick="setV('en-US-AvaNeural', this)">
-                    <p class="text-sm font-bold text-white">Ava (English)</p>
-                    <p class="text-[10px] text-green-400 font-bold uppercase">Female / Professional</p>
+                <div class="v-card p-4" onclick="setV('hi-IN-MadhurNeural', this)">
+                    <p class="font-bold text-sm">Madhur (Hindi)</p>
+                    <p class="text-[9px] text-orange-500 italic">Hard News / Deep - Male</p>
                 </div>
-                <div class="voice-card" onclick="setV('en-GB-RyanNeural', this)">
-                    <p class="text-sm font-bold text-white">Ryan (English)</p>
-                    <p class="text-[10px] text-green-400 font-bold uppercase">Male / British Accent</p>
-                </div>
-                <div class="voice-card" onclick="setV('en-US-GuyNeural', this)">
-                    <p class="text-sm font-bold text-white">Guy (English)</p>
-                    <p class="text-[10px] text-green-400 font-bold uppercase">Male / Deep Story</p>
-                </div>
-                <div class="voice-card" onclick="setV('en-US-JennyNeural', this)">
-                    <p class="text-sm font-bold text-white">Jenny (English)</p>
-                    <p class="text-[10px] text-green-400 font-bold uppercase">Female / Friendly</p>
+                <div class="v-card p-4" onclick="setV('hi-IN-AnanyaNeural', this)">
+                    <p class="font-bold text-sm">Ananya (Hindi)</p>
+                    <p class="text-[9px] text-orange-500 italic">Young YouTube Star - Female</p>
                 </div>
 
-                <div class="voice-card" onclick="setV('hi-IN-AnanyaNeural', this)">
-                    <p class="text-sm font-bold text-white">Ananya (Hindi)</p>
-                    <p class="text-[10px] text-purple-400 font-bold uppercase">Female / YouTube Style</p>
+                <div class="v-card p-4" onclick="setV('en-US-AndrewNeural', this)">
+                    <p class="font-bold text-sm">Andrew (US)</p>
+                    <p class="text-[9px] text-green-500 italic">Professional Business - Male</p>
                 </div>
-                <div class="voice-card" onclick="setV('en-AU-NatashaNeural', this)">
-                    <p class="text-sm font-bold text-white">Natasha (English)</p>
-                    <p class="text-[10px] text-purple-400 font-bold uppercase">Female / Australian</p>
+                <div class="v-card p-4" onclick="setV('en-GB-RyanNeural', this)">
+                    <p class="font-bold text-sm">Ryan (UK)</p>
+                    <p class="text-[9px] text-green-500 italic">Classic British - Male</p>
+                </div>
+                <div class="v-card p-4" onclick="setV('en-US-AvaNeural', this)">
+                    <p class="font-bold text-sm">Ava (US)</p>
+                    <p class="text-[9px] text-green-500 italic">Crystal Clear - Female</p>
+                </div>
+                <div class="v-card p-4" onclick="setV('en-US-BrianNeural', this)">
+                    <p class="font-bold text-sm">Brian (US)</p>
+                    <p class="text-[9px] text-green-500 italic">Podcast Style - Male</p>
+                </div>
+                <div class="v-card p-4" onclick="setV('en-IN-NeerjaNeural', this)">
+                    <p class="font-bold text-sm">Neerja (Indian English)</p>
+                    <p class="text-[9px] text-green-500 italic">Desi Accent English - Female</p>
                 </div>
             </div>
 
-            <div class="lg:col-span-2">
-                <div class="glass-card p-6 mb-6">
-                    <textarea id="script" class="w-full h-[400px] bg-transparent text-gray-200 text-xl leading-relaxed outline-none resize-none" placeholder="Azeem bhai, yahan apna lamba script likhein..."></textarea>
+            <div class="lg:col-span-8">
+                <div class="glass-panel p-8 mb-6 shadow-2xl">
+                    <textarea id="txt" class="w-full h-96 bg-transparent text-gray-200 text-2xl leading-relaxed outline-none resize-none" placeholder="Azeem bhai, script likhein aur voice change kar ke check karein..."></textarea>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
-                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Voice Speed</label>
-                        <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="1" class="w-full mt-2 accent-blue-500">
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <div class="flex-1 min-w-[200px] p-4 bg-gray-900/50 rounded-2xl border border-gray-800">
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Pitch (Bhari Aawaz)</label>
+                        <input type="range" id="p" min="0.4" max="1.6" step="0.1" value="1" class="w-full mt-2 accent-blue-600">
                     </div>
-                    <div class="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
-                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Voice Pitch</label>
-                        <input type="range" id="pitch" min="0.5" max="1.5" step="0.1" value="1" class="w-full mt-2 accent-blue-500">
+                    <div class="flex-1 min-w-[200px] p-4 bg-gray-900/50 rounded-2xl border border-gray-800">
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Speed (Raftaar)</label>
+                        <input type="range" id="s" min="0.5" max="1.5" step="0.1" value="0.9" class="w-full mt-2 accent-blue-600">
                     </div>
                 </div>
 
-                <button onclick="speak()" id="btn" class="w-full btn-generate py-6 rounded-2xl text-white uppercase text-sm flex items-center justify-center gap-4">
-                    <i class="fas fa-play-circle text-xl"></i>
-                    <span>Generate Unlimited Neural Voice</span>
+                <button onclick="playVoice()" id="b" class="w-full btn-main py-7 rounded-3xl text-white uppercase text-sm flex items-center justify-center gap-5">
+                    <i class="fas fa-volume-up text-2xl"></i>
+                    <span>Generate Unique Voice</span>
                 </button>
-                
-                <p id="status" class="mt-4 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest italic">Ready: Infinite Credits Available</p>
+                <p id="st" class="text-center mt-6 text-[10px] text-gray-600 font-bold uppercase tracking-[4px]">Infinite Neural Characters Ready</p>
             </div>
         </div>
     </div>
 
     <script>
-        let currentVoice = 'ur-PK-UzmaNeural';
+        let currentV = 'ur-PK-UzmaNeural';
 
-        function setV(voice, el) {
-            currentVoice = voice;
-            document.querySelectorAll('.voice-card').forEach(c => c.classList.remove('active'));
+        function setV(v, el) {
+            currentV = v;
+            document.querySelectorAll('.v-card').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
         }
 
-        function speak() {
-            const text = document.getElementById('script').value;
-            const rate = document.getElementById('rate').value;
-            const pitch = document.getElementById('pitch').value;
-            const btn = document.getElementById('btn');
+        function playVoice() {
+            const t = document.getElementById('txt').value;
+            const p = document.getElementById('p').value;
+            const s = document.getElementById('s').value;
+            const btn = document.getElementById('b');
 
-            if(!text) { alert("Azeem bhai, script likhein!"); return; }
+            if(!t) return;
 
-            btn.disabled = true;
-            document.getElementById('status').innerText = "Processing via Neural Cloud...";
+            window.speechSynthesis.cancel(); // Pehle wali aawaz band karo
+            
+            const msg = new SpeechSynthesisUtterance(t);
+            const voices = window.speechSynthesis.getVoices();
 
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = currentVoice.substring(0, 5);
-            speech.rate = rate;
-            speech.pitch = pitch;
+            // Sahi voice select karne ka hack
+            msg.lang = currentV.substring(0, 5);
+            msg.pitch = p;
+            msg.rate = s;
 
-            window.speechSynthesis.speak(speech);
+            // Neural voices aksar list mein late aati hain, hum force kar rahe hain
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin text-xl"></i> <span>Synthesizing...</span>`;
+            
+            window.speechSynthesis.speak(msg);
 
-            speech.onend = () => {
-                btn.disabled = false;
-                document.getElementById('status').innerText = "Voice Generation Complete!";
+            msg.onend = () => {
+                btn.innerHTML = `<i class="fas fa-volume-up text-2xl"></i> <span>Generate Unique Voice</span>`;
             };
         }
     </script>
