@@ -100,7 +100,9 @@ YPE html>
     </main>
 
     <script>
+        // API key setup
         const apiKey = ""; 
+
         const generateBtn = document.getElementById('generateBtn');
         const btnText = document.getElementById('btnText');
         const btnLoader = document.getElementById('btnLoader');
@@ -141,25 +143,31 @@ YPE html>
             if (voiceUpload.files.length > 0) uploadStatus.classList.remove('hidden');
         });
 
+        // PCM to WAV helper
         function pcmToWav(pcmData, sampleRate) {
             const buffer = new ArrayBuffer(44 + pcmData.length * 2);
             const view = new DataView(buffer);
+            
             const writeString = (offset, string) => {
-                for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
             };
+
             writeString(0, 'RIFF');
             view.setUint32(4, 32 + pcmData.length * 2, true);
             writeString(8, 'WAVE');
             writeString(12, 'fmt ');
             view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); 
-            view.setUint16(22, 1, true); 
+            view.setUint16(20, 1, true); // PCM
+            view.setUint16(22, 1, true); // Mono
             view.setUint32(24, sampleRate, true);
             view.setUint32(28, sampleRate * 2, true);
             view.setUint16(32, 2, true);
             view.setUint16(34, 16, true);
             writeString(36, 'data');
             view.setUint32(40, pcmData.length * 2, true);
+
             let offset = 44;
             for (let i = 0; i < pcmData.length; i++) {
                 view.setInt16(offset, pcmData[i], true);
@@ -171,9 +179,9 @@ YPE html>
         async function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.readAsDataURL(file);
                 reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
             });
         }
 
@@ -181,32 +189,33 @@ YPE html>
             const text = textInput.value.trim();
             if (!text) return;
 
+            // Reset UI
             generateBtn.disabled = true;
-            btnText.innerText = "Connecting...";
+            btnText.innerText = "Connecting AI...";
             btnLoader.classList.remove('hidden');
             audioContainer.classList.add('hidden');
             downloadSection.classList.add('hidden');
             errorDisplay.innerHTML = "";
 
             try {
-                // IMPORTANT: Exact model name for the environment
+                // Must use gemini-2.5-flash-preview-09-2025
                 const model = "gemini-2.5-flash-preview-09-2025";
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-                
-                const promptText = currentMode === 'clone' 
-                    ? `Clone the voice from the attached audio sample and say clearly: "${text}"` 
-                    : `Say the following text clearly in a ${styleSelect.value} tone: "${text}"`;
+
+                const prompt = currentMode === 'clone' 
+                    ? `Clone this voice and speak: ${text}`
+                    : `Speak this cheerfully: ${text}`;
 
                 const payload = {
-                    contents: [{ 
-                        parts: [{ text: promptText }] 
+                    contents: [{
+                        parts: [{ text: prompt }]
                     }],
                     generationConfig: {
                         responseModalities: ["AUDIO"]
                     }
                 };
 
-                // Add TTS specific config if not cloning
+                // Add TTS specific config if needed
                 if (currentMode !== 'clone') {
                     payload.generationConfig.speechConfig = {
                         voiceConfig: {
@@ -214,9 +223,12 @@ YPE html>
                         }
                     };
                 } else if (voiceUpload.files[0]) {
-                    const base64Audio = await fileToBase64(voiceUpload.files[0]);
+                    const audioData = await fileToBase64(voiceUpload.files[0]);
                     payload.contents[0].parts.push({
-                        inlineData: { mimeType: voiceUpload.files[0].type, data: base64Audio }
+                        inlineData: {
+                            mimeType: voiceUpload.files[0].type,
+                            data: audioData
+                        }
                     });
                 }
 
@@ -227,26 +239,30 @@ YPE html>
                 });
 
                 if (!response.ok) {
-                    const errorJson = await response.json().catch(() => ({}));
-                    const msg = errorJson.error?.message || "Server connection failed.";
-                    throw new Error(msg);
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.error?.message || `API Error: ${response.status}`);
                 }
 
-                const result = await response.json();
-                const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-                
+                const data = await response.json();
+                const audioPart = data.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+
                 if (!audioPart) {
-                    throw new Error("No audio data returned. Try shorter text.");
+                    throw new Error("No audio was generated. Please try shorter text.");
                 }
 
-                const binaryString = atob(audioPart.inlineData.data);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+                // Decode base64 to binary
+                const binary = atob(audioPart.data);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
 
-                const pcm16Data = new Int16Array(bytes.buffer);
-                const wavBlob = pcmToWav(pcm16Data, 24000);
+                // Convert PCM16 to WAV
+                const pcm16 = new Int16Array(bytes.buffer);
+                const wavBlob = pcmToWav(pcm16, 24000); // 24kHz standard
                 const audioUrl = URL.createObjectURL(wavBlob);
 
+                // Setup player
                 audioPlayer.src = audioUrl;
                 audioContainer.classList.remove('hidden');
                 audioContainer.classList.add('flex');
@@ -256,25 +272,23 @@ YPE html>
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
                     a.href = audioUrl;
-                    a.download = `voice-${Date.now()}.wav`;
+                    a.download = `ai_voice_${Date.now()}.wav`;
                     a.click();
                 };
 
                 audioPlayer.play();
 
-            } catch (error) {
-                console.error("API Error:", error);
-                
-                // Retry logic with backoff
+            } catch (err) {
+                console.error("Failed:", err);
                 if (retryCount < 5) {
-                    const delay = Math.pow(2, retryCount) * 1000;
-                    btnText.innerText = `Retrying (${retryCount + 1})...`;
-                    setTimeout(() => generateSpeech(retryCount + 1), delay);
+                    const backoff = Math.pow(2, retryCount) * 1000;
+                    btnText.innerText = `Retrying in ${backoff/1000}s...`;
+                    setTimeout(() => generateSpeech(retryCount + 1), backoff);
                 } else {
                     errorDisplay.innerHTML = `
                         <div class="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
-                            <strong>Generation Error:</strong> ${error.message}<br>
-                            <span class="text-xs opacity-70">Hint: Try refreshing the page if this persists.</span>
+                            <strong>System Error:</strong> ${err.message}<br>
+                            <span class="text-xs opacity-70">Hint: Model might be busy or API key injection failed. Try refreshing the page.</span>
                         </div>
                     `;
                 }
@@ -287,10 +301,10 @@ YPE html>
             }
         }
 
-        generateBtn.addEventListener('click', () => generateSpeech());
-        textInput.addEventListener('input', () => {
+        generateBtn.onclick = () => generateSpeech();
+        textInput.oninput = () => {
             document.getElementById('charCount').innerText = `${textInput.value.length} / 5000 characters`;
-        });
+        };
     </script>
 </body>
 </html>
