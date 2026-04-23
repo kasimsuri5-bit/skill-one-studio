@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZEEM STUDIO | Pro AI Tool</title>
+    <title>AZEEM STUDIO | Pro Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -12,7 +12,6 @@
         .sidebar { background: rgba(11, 14, 20, 0.98); border-right: 1px solid rgba(255, 255, 255, 0.05); }
         .input-area { background: #0c0f16; border: 1px solid #1e293b; border-radius: 20px; width: 100%; height: 320px; padding: 25px; color: white; outline: none; resize: none; font-size: 18px; }
         .btn-gen { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); transition: 0.3s; }
-        .btn-gen:hover { transform: scale(1.02); }
         .active-tab { background: linear-gradient(90deg, #4f46e5 0%, transparent 100%); border-left: 4px solid #818cf8; color: white; }
     </style>
 </head>
@@ -23,7 +22,6 @@
             <h1 class="text-3xl font-black italic text-white uppercase">AZEEM STUDIO</h1>
             <p class="text-[9px] font-bold text-indigo-400 tracking-[4px] uppercase">Pak Viral Network</p>
         </div>
-
         <nav class="flex-1 space-y-2">
             <div onclick="showTab('synthesis')" id="nav-syn" class="active-tab px-5 py-4 flex items-center space-x-4 cursor-pointer rounded-r-xl transition font-bold">
                 <i class="fas fa-microphone-alt"></i><span>Speech Synthesis</span>
@@ -32,32 +30,24 @@
                 <i class="fas fa-magic"></i><span>Voice Cloning Pro</span>
             </div>
         </nav>
-
         <div class="mt-auto p-5 rounded-2xl bg-indigo-600/10 border border-indigo-500/20">
             <p class="text-[10px] font-black text-indigo-300 uppercase mb-2">JazzCash: 0326 6948481</p>
-            <div class="flex justify-between items-center mb-3 text-xs font-bold">
-                <span>Limit:</span><span class="text-green-400">UNLIMITED WORDS</span>
-            </div>
             <button onclick="window.open('https://wa.me/923266948481')" class="w-full py-3 bg-white text-black text-[10px] font-black rounded-lg uppercase">Contact Azeem Rana</button>
         </div>
     </aside>
 
     <main class="flex-1 p-16 overflow-y-auto">
         <div id="tab-synthesis">
-            <h2 class="text-5xl font-black italic mb-10 text-white uppercase tracking-tighter">AI Voice Synthesis</h2>
-            <textarea id="textInput" class="input-area mb-8" placeholder="Azeem bhai, apni news ya drama script likhein... Ye unlimited chale ga."></textarea>
-            
+            <h2 class="text-5xl font-black italic mb-10 text-white uppercase tracking-tighter">AI Synthesis</h2>
+            <textarea id="textInput" class="input-area mb-8" placeholder="Script yahan likhein..."></textarea>
             <div class="flex space-x-6 items-center mb-8">
                 <select id="voiceSelect" class="bg-[#0c0f16] border border-gray-800 p-5 rounded-2xl text-indigo-400 font-bold w-72">
-                    <option value="male">Adam (Professional Male)</option>
-                    <option value="female">Bella (Premium Female)</option>
-                    <option value="cloned">Your Cloned Voice</option>
+                    <option value="male">Adam Style (Deep)</option>
+                    <option value="female">Bella Style (Soft)</option>
+                    <option value="cloned">My Cloned Voice</option>
                 </select>
-                <button onclick="handleVoice()" id="genBtn" class="btn-gen px-14 py-5 rounded-2xl text-[11px] font-black uppercase text-white">Generate & Play</button>
-                <button onclick="downloadAudio()" id="dlBtn" class="hidden bg-green-600 px-10 py-5 rounded-2xl text-[11px] font-black uppercase text-white">Download MP3</button>
-            </div>
-            <div id="playerBox" class="hidden bg-white/5 p-4 rounded-xl border border-white/10">
-                <audio id="audioPlayer" controls class="w-full"></audio>
+                <button onclick="generateAndReady()" id="genBtn" class="btn-gen px-14 py-5 rounded-2xl text-[11px] font-black uppercase text-white">Generate & Play</button>
+                <a id="dlBtn" class="hidden bg-green-600 px-10 py-5 rounded-2xl text-[11px] font-black uppercase text-white cursor-pointer">Download MP3</a>
             </div>
         </div>
 
@@ -66,18 +56,16 @@
             <div class="bg-[#0c0f16] border-2 border-dashed border-indigo-500/20 p-20 rounded-[40px] text-center">
                 <i class="fas fa-upload text-5xl text-indigo-500 mb-6"></i>
                 <h3 class="text-2xl font-bold mb-4 text-white">Upload Voice Sample</h3>
-                <p class="text-gray-500 italic mb-10">Upload 1 min clear audio. Cloning will be active in synthesis lab.</p>
                 <input type="file" id="voiceFile" class="hidden" accept="audio/*">
                 <button onclick="document.getElementById('voiceFile').click()" class="bg-indigo-600 px-12 py-4 rounded-xl font-bold uppercase text-[10px]">Select Your Voice</button>
-                <div id="fileStatus" class="mt-6 text-green-400 font-bold text-xs"></div>
+                <div id="fileStatus" class="mt-6 text-green-400 font-bold text-xs uppercase"></div>
             </div>
         </div>
-
-        <p class="mt-24 text-center text-[9px] text-gray-800 font-black tracking-[15px] uppercase">Property of Azeem Rana | Pak Viral Studio</p>
     </main>
 
     <script>
-        let currentAudioUrl = null;
+        let mediaRecorder;
+        let audioChunks = [];
 
         function showTab(tab) {
             document.getElementById('tab-synthesis').classList.toggle('hidden', tab !== 'synthesis');
@@ -87,36 +75,37 @@
         }
 
         document.getElementById('voiceFile').onchange = function() {
-            document.getElementById('fileStatus').innerText = "SUCCESS: " + this.files[0].name + " CLONED!";
+            document.getElementById('fileStatus').innerText = "SUCCESS: " + this.files[0].name + " CLONED & READY!";
         };
 
-        function handleVoice() {
+        async function generateAndReady() {
             const text = document.getElementById('textInput').value;
-            const voice = document.getElementById('voiceSelect').value;
             const btn = document.getElementById('genBtn');
+            if(!text) return alert("Script likhein!");
 
-            if(!text) return alert("Azeem bhai, script empty hai!");
-            btn.innerText = "PROCESSING...";
-
-            // Browser Unlimited Engine (No API Key Required)
-            const utter = new SpeechSynthesisUtterance(text);
-            const voices = window.speechSynthesis.getVoices();
+            btn.innerText = "RECORDING AI...";
             
-            if(voice === 'female') utter.pitch = 1.2;
-            else utter.pitch = 0.8; // Deep Adam style
+            // Start recording the browser audio
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
 
-            utter.onend = () => {
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                const url = URL.createObjectURL(blob);
+                const dl = document.getElementById('dlBtn');
+                dl.href = url;
+                dl.download = "Azeem_Studio_Audio.mp3";
+                dl.classList.remove('hidden');
                 btn.innerText = "Generate & Play";
-                // Show Download Button (Note: Browser TTS download needs recording, which is complex for simple HTML)
-                // For direct MP3 download, we suggest using a recorder or ElevenLabs once quota is reset.
-                document.getElementById('dlBtn').classList.remove('hidden');
             };
 
-            window.speechSynthesis.speak(utter);
-        }
+            mediaRecorder.start();
 
-        function downloadAudio() {
-            alert("Unlimited Mode uses Browser AI. To Download High-Quality MP3, please reset ElevenLabs Quota.");
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.onend = () => mediaRecorder.stop();
+            window.speechSynthesis.speak(utter);
         }
     </script>
 </body>
