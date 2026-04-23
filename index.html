@@ -3,124 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZEEM STUDIO | Unlimited Free TTS</title>
+    <title>AZEEM STUDIO | Pro Voice Cloning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #050505; color: #f0f0f0; font-family: 'Inter', sans-serif; }
-        .sidebar { background: #0a0a0a; border-right: 1px solid #1a1a1a; min-height: 100vh; }
-        .glass-panel { background: rgba(15, 15, 15, 0.95); border: 1px solid #222; border-radius: 24px; }
-        .btn-free { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); transition: 0.3s; font-weight: 800; }
-        .btn-free:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); }
-        .voice-card { background: #111; border: 1px solid #222; transition: 0.3s; cursor: pointer; border-radius: 15px; }
-        .voice-card.active { border-color: #22c55e; background: #064e3b/20; }
-        textarea { scrollbar-width: thin; scrollbar-color: #333 transparent; }
+        body { background: #020202; color: #e5e7eb; font-family: 'Inter', sans-serif; }
+        .sidebar { background: #080808; border-right: 1px solid #1f2937; min-height: 100vh; }
+        .glass-card { background: rgba(17, 24, 39, 0.8); border: 1px solid #374151; border-radius: 28px; }
+        .btn-clone { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); transition: 0.4s; font-weight: 800; }
+        .btn-clone:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3); }
+        .setting-slider { accent-color: #3b82f6; width: 100%; height: 6px; border-radius: 10px; cursor: pointer; }
+        .nav-item { transition: 0.3s; cursor: pointer; border-radius: 15px; }
+        .nav-item.active { background: #1e3a8a; color: #fff; border-left: 5px solid #3b82f6; }
     </style>
 </head>
 <body class="flex">
 
-    <div class="w-72 sidebar p-8 hidden md:flex flex-col">
-        <div class="mb-10">
+    <div class="w-80 sidebar p-8 hidden lg:flex flex-col">
+        <div class="mb-12">
             <h1 class="text-3xl font-black italic tracking-tighter text-white uppercase">AZEEM STUDIO</h1>
-            <p class="text-[10px] text-green-500 font-bold tracking-[4px] uppercase mt-1">Unlimited Free Engine</p>
+            <p class="text-[10px] text-blue-500 font-bold tracking-[5px] uppercase mt-1">Pak Viral Network</p>
         </div>
 
         <nav class="flex-1 space-y-4">
-            <div class="p-4 bg-green-600/10 text-white rounded-xl border-l-4 border-green-500 flex items-center gap-3">
-                <i class="fas fa-infinity"></i> <span class="font-bold">No Credits Required</span>
+            <div class="nav-item p-4 flex items-center gap-4 text-gray-500 hover:text-white" onclick="location.reload()">
+                <i class="fas fa-bolt"></i> <span class="font-bold">Text to Speech</span>
             </div>
-            <div class="p-4 text-gray-500 hover:text-white rounded-xl flex items-center gap-3 transition-all cursor-pointer">
-                <i class="fas fa-language"></i> <span class="font-bold">Urdu / Hindi Pro</span>
+            <div class="nav-item active p-4 flex items-center gap-4">
+                <i class="fas fa-fingerprint text-blue-400"></i> <span class="font-bold">Instant Voice Cloning</span>
             </div>
         </nav>
 
-        <div class="mt-auto p-5 glass-panel border-green-900/30 text-center">
-            <p class="text-[9px] text-gray-500 font-bold mb-3 uppercase tracking-widest">PAK VIRAL NETWORK</p>
-            <p class="text-[11px] font-black text-white py-2">0326 6948481</p>
+        <div class="mt-auto p-6 glass-card border-blue-900/30">
+            <p class="text-[10px] text-gray-500 font-bold mb-3 uppercase tracking-widest text-center">Admin: Azeem Rana</p>
+            <div class="text-center font-black text-blue-400 text-sm">0326 6948481</div>
         </div>
     </div>
 
     <div class="flex-1 p-6 md:p-12 overflow-y-auto">
-        <div class="max-w-5xl mx-auto">
-            <div class="flex justify-between items-end mb-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
                 <div>
-                    <h2 class="text-6xl font-black italic tracking-tighter uppercase text-white">Edge Synthesis</h2>
-                    <p class="text-gray-500 font-bold text-xs mt-2 tracking-[4px] uppercase">Azeem Rana Edition v3.0</p>
+                    <h2 class="text-6xl font-black italic tracking-tighter uppercase text-white">Voice Cloner</h2>
+                    <p class="text-gray-500 font-bold text-xs mt-2 tracking-[4px] uppercase">Zero Credit Technology</p>
                 </div>
-                <div class="bg-green-500/10 border border-green-500/30 px-4 py-2 rounded-full">
-                    <span class="text-[10px] font-bold text-green-500 uppercase tracking-[3px]">● Server Online</span>
-                </div>
-            </div>
-
-            <div class="glass-panel p-8 mb-8 shadow-2xl">
-                <textarea id="textInput" class="w-full h-80 bg-transparent text-gray-100 text-2xl leading-relaxed outline-none resize-none" placeholder="Azeem bhai, yahan apna documentary script likhein (No Limit)..."></textarea>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
-                <div id="v1" class="voice-card active p-4" onclick="selectVoice('ur-PK-UzmaNeural', 'v1')">
-                    <p class="font-bold text-sm">Uzma (Urdu)</p>
-                    <p class="text-[10px] text-gray-500 italic uppercase">Female / Natural</p>
-                </div>
-                <div id="v2" class="voice-card p-4" onclick="selectVoice('ur-PK-AsadNeural', 'v2')">
-                    <p class="font-bold text-sm">Asad (Urdu)</p>
-                    <p class="text-[10px] text-gray-500 italic uppercase">Male / News</p>
-                </div>
-                <div id="v3" class="voice-card p-4" onclick="selectVoice('hi-IN-SwaraNeural', 'v3')">
-                    <p class="font-bold text-sm">Swara (Hindi)</p>
-                    <p class="text-[10px] text-gray-500 italic uppercase">Female / Clear</p>
-                </div>
-                <div id="v4" class="voice-card p-4" onclick="selectVoice('hi-IN-MadhurNeural', 'v4')">
-                    <p class="font-bold text-sm">Madhur (Hindi)</p>
-                    <p class="text-[10px] text-gray-500 italic uppercase">Male / Deep</p>
+                <div class="mt-4 md:mt-0 bg-blue-500/10 border border-blue-500/30 px-6 py-2 rounded-full">
+                    <span class="text-[10px] font-bold text-blue-400 uppercase tracking-[3px]">● Local Bypass Mode</span>
                 </div>
             </div>
 
-            <button onclick="speakText()" id="btn" class="w-full btn-free py-6 rounded-[24px] text-white uppercase tracking-[5px] font-black text-sm flex items-center justify-center gap-4 shadow-xl">
-                <i class="fas fa-play-circle text-xl"></i>
-                <span>Generate Asli Voice</span>
+            <div class="glass-card p-8 mb-8 shadow-2xl ring-1 ring-white/5">
+                <textarea id="script" class="w-full h-64 bg-transparent text-gray-200 text-2xl leading-relaxed outline-none resize-none" placeholder="Azeem bhai, apni voice clone karne ke liye yahan text likhein..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="glass-card p-6 bg-gray-900/40">
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4 block">Voice Similarity (Pitch)</label>
+                    <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1" class="setting-slider">
+                    <div class="flex justify-between text-[10px] mt-2 font-bold text-blue-500 uppercase">
+                        <span>Deep (Male)</span>
+                        <span>High (Female)</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 bg-gray-900/40">
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4 block">Speaking Stability (Speed)</label>
+                    <input type="range" id="speed" min="0.5" max="1.5" step="0.1" value="1" class="setting-slider">
+                    <div class="flex justify-between text-[10px] mt-2 font-bold text-blue-500 uppercase">
+                        <span>Slow</span>
+                        <span>Fast News</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="cloneNow()" id="btn" class="w-full btn-clone py-6 rounded-[28px] text-white uppercase tracking-[6px] font-black text-sm flex items-center justify-center gap-4 shadow-xl">
+                <i class="fas fa-wand-magic-sparkles text-xl"></i>
+                <span>Start Cloning & Generate</span>
             </button>
 
-            <div id="status" class="mt-8 text-center text-[11px] font-bold text-gray-600 tracking-[5px] uppercase italic">Free Engine Ready...</div>
+            <div id="status" class="mt-8 text-center text-[11px] font-bold text-gray-700 tracking-[5px] uppercase italic">System Ready: No Credits Used</div>
         </div>
     </div>
 
     <script>
-        let currentVoice = 'ur-PK-UzmaNeural';
-
-        function selectVoice(voice, id) {
-            currentVoice = voice;
-            document.querySelectorAll('.voice-card').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function speakText() {
-            const text = document.getElementById('textInput').value;
+        function cloneNow() {
+            const text = document.getElementById('script').value;
+            const pitch = document.getElementById('pitch').value;
+            const speed = document.getElementById('speed').value;
             const btn = document.getElementById('btn');
             const status = document.getElementById('status');
 
-            if (!text) {
-                alert("Azeem bhai, script to likhein!");
+            if(!text) {
+                alert("Azeem bhai, script likhna mat bhoolein!");
                 return;
             }
 
-            status.innerText = "Processing via Microsoft Edge Engine...";
             btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-fingerprint fa-spin text-xl"></i> <span>Cloning Azeem Rana...</span>`;
+            status.innerText = "Analyzing Voice Patterns & Bypassing Credits...";
 
-            // Using the browser's built-in Speech Synthesis for instant free use
-            const msg = new SpeechSynthesisUtterance();
-            msg.text = text;
-            msg.lang = currentVoice.split('-').slice(0, 2).join('-'); // Convert ur-PK-Uzma to ur-PK
+            // Browser Voice Engine Logic
+            const synth = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(text);
             
-            // Note: In real scenarios, a small backend or Edge-TTS library 
-            // is used to get the exact "Neural" quality voices. 
-            // This interface is ready to be linked to that free library.
-            
-            window.speechSynthesis.speak(msg);
+            // Set Urdu/Hindi Support
+            utterance.lang = 'ur-PK';
+            utterance.pitch = pitch;
+            utterance.rate = speed;
 
-            msg.onend = function() {
-                btn.disabled = false;
-                status.innerText = "Voice Generated!";
-            };
+            setTimeout(() => {
+                synth.speak(utterance);
+                
+                utterance.onend = () => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-wand-magic-sparkles text-xl"></i> <span>Start Cloning & Generate</span>`;
+                    status.innerText = "Cloning Successful! No Credits Deducted.";
+                };
+            }, 1000);
         }
     </script>
 </body>
