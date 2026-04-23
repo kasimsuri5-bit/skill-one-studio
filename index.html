@@ -100,7 +100,6 @@ YPE html>
     </main>
 
     <script>
-        // API Key will be injected by the environment
         const apiKey = ""; 
         const generateBtn = document.getElementById('generateBtn');
         const btnText = document.getElementById('btnText');
@@ -142,7 +141,6 @@ YPE html>
             if (voiceUpload.files.length > 0) uploadStatus.classList.remove('hidden');
         });
 
-        // Function to convert PCM16 to WAV
         function pcmToWav(pcmData, sampleRate) {
             const buffer = new ArrayBuffer(44 + pcmData.length * 2);
             const view = new DataView(buffer);
@@ -154,8 +152,8 @@ YPE html>
             writeString(8, 'WAVE');
             writeString(12, 'fmt ');
             view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); // PCM format
-            view.setUint16(22, 1, true); // Mono
+            view.setUint16(20, 1, true); 
+            view.setUint16(22, 1, true); 
             view.setUint32(24, sampleRate, true);
             view.setUint32(28, sampleRate * 2, true);
             view.setUint16(32, 2, true);
@@ -184,22 +182,22 @@ YPE html>
             if (!text) return;
 
             generateBtn.disabled = true;
-            btnText.innerText = "Generating...";
+            btnText.innerText = "Connecting...";
             btnLoader.classList.remove('hidden');
             audioContainer.classList.add('hidden');
             downloadSection.classList.add('hidden');
             errorDisplay.innerHTML = "";
 
             try {
-                // Must use gemini-2.5-flash-preview-09-2025 for TTS in this environment
+                // IMPORTANT: Exact model name for the environment
                 const model = "gemini-2.5-flash-preview-09-2025";
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
                 
                 const promptText = currentMode === 'clone' 
-                    ? `Clone this voice and say: "${text}"` 
-                    : `Say in a ${styleSelect.value} style: "${text}"`;
+                    ? `Clone the voice from the attached audio sample and say clearly: "${text}"` 
+                    : `Say the following text clearly in a ${styleSelect.value} tone: "${text}"`;
 
-                let payload = {
+                const payload = {
                     contents: [{ 
                         parts: [{ text: promptText }] 
                     }],
@@ -208,6 +206,7 @@ YPE html>
                     }
                 };
 
+                // Add TTS specific config if not cloning
                 if (currentMode !== 'clone') {
                     payload.generationConfig.speechConfig = {
                         voiceConfig: {
@@ -228,21 +227,23 @@ YPE html>
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error?.message || "Failed to connect to AI server.");
+                    const errorJson = await response.json().catch(() => ({}));
+                    const msg = errorJson.error?.message || "Server connection failed.";
+                    throw new Error(msg);
                 }
 
                 const result = await response.json();
                 const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
                 
-                if (!audioPart) throw new Error("No audio was returned from the AI. Try a shorter text.");
+                if (!audioPart) {
+                    throw new Error("No audio data returned. Try shorter text.");
+                }
 
                 const binaryString = atob(audioPart.inlineData.data);
                 const bytes = new Uint8Array(binaryString.length);
                 for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
 
                 const pcm16Data = new Int16Array(bytes.buffer);
-                // The API usually returns 24kHz or 16kHz audio for these models
                 const wavBlob = pcmToWav(pcm16Data, 24000);
                 const audioUrl = URL.createObjectURL(wavBlob);
 
@@ -255,36 +256,38 @@ YPE html>
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
                     a.href = audioUrl;
-                    a.download = `ai-voice-${Date.now()}.wav`;
+                    a.download = `voice-${Date.now()}.wav`;
                     a.click();
                 };
 
-                audioPlayer.play().catch(e => console.log("Auto-play blocked"));
+                audioPlayer.play();
 
             } catch (error) {
-                console.error("Error generating voice:", error);
+                console.error("API Error:", error);
                 
-                // Exponential backoff retry logic (up to 5 times)
+                // Retry logic with backoff
                 if (retryCount < 5) {
-                    const waitTime = Math.pow(2, retryCount) * 1000;
-                    setTimeout(() => generateSpeech(retryCount + 1), waitTime);
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    btnText.innerText = `Retrying (${retryCount + 1})...`;
+                    setTimeout(() => generateSpeech(retryCount + 1), delay);
                 } else {
                     errorDisplay.innerHTML = `
                         <div class="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
-                            <strong>System Error:</strong> ${error.message}<br>
-                            <span class="text-xs opacity-70">Please refresh and try again.</span>
+                            <strong>Generation Error:</strong> ${error.message}<br>
+                            <span class="text-xs opacity-70">Hint: Try refreshing the page if this persists.</span>
                         </div>
                     `;
                 }
             } finally {
-                generateBtn.disabled = false;
-                btnText.innerText = "Generate AI Voice";
-                btnLoader.classList.add('hidden');
+                if (retryCount >= 5 || !errorDisplay.innerHTML) {
+                    generateBtn.disabled = false;
+                    btnText.innerText = "Generate AI Voice";
+                    btnLoader.classList.add('hidden');
+                }
             }
         }
 
         generateBtn.addEventListener('click', () => generateSpeech());
-
         textInput.addEventListener('input', () => {
             document.getElementById('charCount').innerText = `${textInput.value.length} / 5000 characters`;
         });
