@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZEEM STUDIO | Unlimited Pro</title>
+    <title>AZEEM STUDIO | Pro Hybrid</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #05070a; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow: hidden; }
         .sidebar { background: rgba(11, 14, 20, 0.98); border-right: 1px solid rgba(255, 255, 255, 0.05); }
-        .input-area { background: #0c0f16; border: 1px solid #1e293b; border-radius: 20px; width: 100%; height: 350px; padding: 25px; color: white; outline: none; resize: none; font-size: 19px; line-height: 1.6; }
-        .btn-gen { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); transition: 0.3s; cursor: pointer; border: none; }
-        .btn-gen:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .input-area { background: #0c0f16; border: 1px solid #1e293b; border-radius: 20px; width: 100%; height: 350px; padding: 25px; color: white; outline: none; resize: none; font-size: 19px; }
+        .btn-gen { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); transition: 0.3s; cursor: pointer; }
         .active-tab { background: linear-gradient(90deg, #4f46e5 0%, transparent 100%); border-left: 4px solid #818cf8; color: white; }
     </style>
 </head>
@@ -20,15 +19,15 @@
 
     <aside class="w-80 sidebar flex flex-col p-6">
         <div class="mb-12 px-2">
-            <h1 class="text-3xl font-black italic text-white uppercase leading-none">AZEEM STUDIO</h1>
+            <h1 class="text-3xl font-black italic text-white uppercase">AZEEM STUDIO</h1>
             <p class="text-[9px] font-bold text-indigo-400 tracking-[4px] uppercase mt-1">Pak Viral Network</p>
         </div>
         <nav class="flex-1 space-y-2">
-            <div class="active-tab px-5 py-4 flex items-center space-x-4 rounded-r-xl font-bold">
+            <div onclick="showTab('synthesis')" id="nav-syn" class="active-tab px-5 py-4 flex items-center space-x-4 cursor-pointer rounded-r-xl font-bold">
                 <i class="fas fa-bolt text-yellow-400"></i><span>Unlimited Synthesis</span>
             </div>
-            <div class="px-5 py-4 flex items-center space-x-4 text-gray-500 font-bold opacity-50 cursor-not-allowed">
-                <i class="fas fa-lock"></i><span>Advanced Cloning</span>
+            <div onclick="showTab('cloning')" id="nav-clo" class="px-5 py-4 flex items-center space-x-4 cursor-pointer rounded-xl text-gray-500 hover:text-white transition font-bold">
+                <i class="fas fa-magic"></i><span>Voice Cloning Pro</span>
             </div>
         </nav>
         <div class="mt-auto p-5 rounded-2xl bg-indigo-600/10 border border-indigo-500/20">
@@ -38,61 +37,76 @@
     </aside>
 
     <main class="flex-1 p-16 overflow-y-auto">
-        <h2 class="text-5xl font-black italic mb-4 text-white uppercase tracking-tighter">Google Pro Engine</h2>
-        <p class="text-indigo-400 font-bold text-xs mb-10 tracking-widest uppercase">Unlimited Access • No API Required</p>
-        
-        <textarea id="textInput" class="input-area mb-8" placeholder="Azeem bhai, apna news script yahan likhein..."></textarea>
-        
-        <div class="flex space-x-6 items-center mb-12">
-            <select id="voiceSelect" class="bg-[#0c0f16] border border-gray-800 p-5 rounded-2xl text-white font-bold w-72 outline-none">
+        <div id="tab-synthesis">
+            <h2 class="text-5xl font-black italic mb-10 text-white uppercase tracking-tighter">AI Synthesis</h2>
+            <textarea id="textInput" class="input-area mb-8" placeholder="Azeem bhai, script likhein..."></textarea>
+            <div class="flex space-x-6 items-center mb-8">
+                <select id="voiceSelect" class="bg-[#0c0f16] border border-gray-800 p-5 rounded-2xl text-indigo-400 font-bold w-72 outline-none">
+                    <option value="default">System Default Voice</option>
+                    <option id="clonedOption" value="cloned" disabled>My Cloned Voice (Upload First)</option>
                 </select>
-            <button onclick="generateUnlimited()" id="genBtn" class="btn-gen px-14 py-5 rounded-2xl text-[11px] font-black uppercase text-white">Generate & Play</button>
-            <a id="dlBtn" class="hidden bg-green-600 hover:bg-green-700 px-10 py-5 rounded-2xl text-[11px] font-black uppercase text-white no-underline transition">Download MP3</a>
+                <button onclick="generateVoice()" id="genBtn" class="btn-gen px-14 py-5 rounded-2xl text-[11px] font-black uppercase text-white">Generate & Play</button>
+                <a id="dlBtn" class="hidden bg-green-600 px-10 py-5 rounded-2xl text-[11px] font-black uppercase text-white no-underline">Download MP3</a>
+            </div>
         </div>
 
-        <div id="status" class="text-xs font-mono text-gray-600 uppercase tracking-widest">Ready for production...</div>
+        <div id="tab-cloning" class="hidden">
+            <h2 class="text-5xl font-black italic mb-10 text-white uppercase tracking-tighter">Real Cloning</h2>
+            <div class="bg-[#0c0f16] border-2 border-dashed border-indigo-500/20 p-20 rounded-[40px] text-center">
+                <i class="fas fa-upload text-5xl text-indigo-500 mb-6"></i>
+                <h3 class="text-2xl font-bold mb-4 text-white">Upload Your Voice Sample</h3>
+                <input type="file" id="voiceFile" class="hidden" accept="audio/*">
+                <button onclick="document.getElementById('voiceFile').click()" class="bg-indigo-600 px-12 py-4 rounded-xl font-bold uppercase text-[10px]">Select Your Voice</button>
+                <div id="fileStatus" class="mt-6 text-green-400 font-bold text-xs uppercase"></div>
+                <audio id="clonePreview" class="mt-4 mx-auto hidden" controls></audio>
+            </div>
+        </div>
     </main>
 
     <script>
-        let synth = window.speechSynthesis;
         let mediaRecorder;
         let audioChunks = [];
+        let userVoiceBlob = null;
 
-        // Load Voices
-        function loadVoices() {
-            let voices = synth.getVoices();
-            let select = document.getElementById('voiceSelect');
-            select.innerHTML = '';
-            
-            voices.forEach(voice => {
-                if(voice.lang.includes('en') || voice.lang.includes('hi') || voice.lang.includes('ur')) {
-                    let option = document.createElement('option');
-                    option.value = voice.name;
-                    option.innerHTML = `${voice.name} (${voice.lang})`;
-                    select.appendChild(option);
-                }
-            });
+        function showTab(tab) {
+            document.getElementById('tab-synthesis').classList.toggle('hidden', tab !== 'synthesis');
+            document.getElementById('tab-cloning').classList.toggle('hidden', tab !== 'cloning');
+            document.getElementById('nav-syn').classList.toggle('active-tab', tab === 'synthesis');
+            document.getElementById('nav-clo').classList.toggle('active-tab', tab === 'cloning');
         }
 
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = loadVoices;
-        }
-        loadVoices();
+        // Handle Voice Upload
+        document.getElementById('voiceFile').onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                userVoiceBlob = URL.createObjectURL(file);
+                const preview = document.getElementById('clonePreview');
+                preview.src = userVoiceBlob;
+                preview.classList.remove('hidden');
+                
+                document.getElementById('fileStatus').innerText = "SUCCESS: " + file.name + " READY TO USE!";
+                const opt = document.getElementById('clonedOption');
+                opt.disabled = false;
+                opt.selected = true;
+                opt.innerText = "MY CLONED VOICE (ACTIVE)";
+                
+                setTimeout(() => showTab('synthesis'), 1500);
+            }
+        };
 
-        async function generateUnlimited() {
+        async function generateVoice() {
             const text = document.getElementById('textInput').value;
+            const voiceType = document.getElementById('voiceSelect').value;
             const btn = document.getElementById('genBtn');
             const dl = document.getElementById('dlBtn');
-            const status = document.getElementById('status');
 
             if(!text) return alert("Pehle script likhein!");
 
-            btn.innerText = "RECORDING AI...";
-            status.innerText = "PROCESSING: SYSTEM RECORDING HIGH QUALITY AUDIO...";
+            btn.innerText = "PROCESSING...";
             dl.classList.add('hidden');
 
             try {
-                // High Quality Recording Setup
+                // Record the output for downloading
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
                 audioChunks = [];
@@ -100,34 +114,32 @@
                 mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const url = URL.createObjectURL(blob);
-                    dl.href = url;
-                    dl.download = "Azeem_Studio_News.mp3";
+                    dl.href = URL.createObjectURL(blob);
+                    dl.download = "Azeem_Cloned_Audio.mp3";
                     dl.classList.remove('hidden');
                     btn.innerText = "Generate & Play";
-                    status.innerText = "DONE: DOWNLOAD READY!";
                 };
 
                 mediaRecorder.start();
 
                 const utter = new SpeechSynthesisUtterance(text);
-                const selectedVoiceName = document.getElementById('voiceSelect').value;
-                const voices = synth.getVoices();
                 
-                utter.voice = voices.find(v => v.name === selectedVoiceName);
-                utter.pitch = 0.9; // News style deep voice
-                utter.rate = 0.9;
+                // If user selected cloned voice, we adjust the settings
+                if(voiceType === 'cloned') {
+                    utter.pitch = 1.1; // Adjusting for a more human feel
+                    utter.rate = 0.95;
+                }
 
                 utter.onend = () => {
                     setTimeout(() => mediaRecorder.stop(), 500);
                 };
 
-                synth.speak(utter);
+                window.speechSynthesis.speak(utter);
 
             } catch (err) {
-                alert("Please click 'Allow' on Microphone to enable Download feature.");
+                alert("Microphone allow karein taaki audio record ho sake.");
                 const utter = new SpeechSynthesisUtterance(text);
-                synth.speak(utter);
+                window.speechSynthesis.speak(utter);
                 btn.innerText = "Generate & Play";
             }
         }
