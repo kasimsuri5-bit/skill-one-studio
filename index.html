@@ -3,7 +3,7 @@ YPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Studio - Voice Cloning & TTS</title>
+    <title>AZEEM STUDIO - Voice Cloning & TTS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -20,8 +20,8 @@ YPE html>
 
     <header class="w-full max-w-4xl flex justify-between items-center mb-8">
         <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">V</div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">VoiceStudio <span class="text-indigo-400 text-sm font-normal underline decoration-indigo-500/50">PRO</span></h1>
+            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">A</div>
+            <h1 class="text-2xl font-bold tracking-tight text-white">AZEEM STUDIO <span class="text-indigo-400 text-sm font-normal underline decoration-indigo-500/50">PRO</span></h1>
         </div>
         <div class="flex gap-4">
             <button id="tabTts" class="px-4 py-2 text-slate-400 font-medium tab-active transition cursor-pointer">Text to Speech</button>
@@ -70,7 +70,7 @@ YPE html>
 
         <div class="mb-8">
             <label class="block text-sm font-medium text-slate-300 mb-2">Text Enter Karein</label>
-            <textarea id="textInput" placeholder="Yahan apna text likhein..." class="w-full h-48 bg-slate-800 border border-slate-700 rounded-2xl p-6 outline-none focus:border-indigo-500 transition resize-none text-lg">Hello! VoiceStudio Pro mein aapka swagat hai. Kya aap aaj koi naya voice generate karna chahte hain?</textarea>
+            <textarea id="textInput" placeholder="Yahan apna text likhein..." class="w-full h-48 bg-slate-800 border border-slate-700 rounded-2xl p-6 outline-none focus:border-indigo-500 transition resize-none text-lg">Hello! AZEEM STUDIO mein aapka swagat hai. Main aapke liye koi bhi voice generate kar sakta hoon.</textarea>
             <div class="mt-2 text-right text-xs text-slate-500" id="charCount">0 / 5000 characters</div>
         </div>
 
@@ -100,7 +100,7 @@ YPE html>
     </main>
 
     <script>
-        // API key setup
+        // API Key (Runtime injected)
         const apiKey = ""; 
 
         const generateBtn = document.getElementById('generateBtn');
@@ -143,23 +143,19 @@ YPE html>
             if (voiceUpload.files.length > 0) uploadStatus.classList.remove('hidden');
         });
 
-        // PCM to WAV helper
+        // Robust PCM to WAV conversion
         function pcmToWav(pcmData, sampleRate) {
             const buffer = new ArrayBuffer(44 + pcmData.length * 2);
             const view = new DataView(buffer);
-            
             const writeString = (offset, string) => {
-                for (let i = 0; i < string.length; i++) {
-                    view.setUint8(offset + i, string.charCodeAt(i));
-                }
+                for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
             };
-
             writeString(0, 'RIFF');
             view.setUint32(4, 32 + pcmData.length * 2, true);
             writeString(8, 'WAVE');
             writeString(12, 'fmt ');
             view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); // PCM
+            view.setUint16(20, 1, true); // PCM format
             view.setUint16(22, 1, true); // Mono
             view.setUint32(24, sampleRate, true);
             view.setUint32(28, sampleRate * 2, true);
@@ -167,7 +163,6 @@ YPE html>
             view.setUint16(34, 16, true);
             writeString(36, 'data');
             view.setUint32(40, pcmData.length * 2, true);
-
             let offset = 44;
             for (let i = 0; i < pcmData.length; i++) {
                 view.setInt16(offset, pcmData[i], true);
@@ -189,47 +184,46 @@ YPE html>
             const text = textInput.value.trim();
             if (!text) return;
 
-            // Reset UI
             generateBtn.disabled = true;
-            btnText.innerText = "Connecting AI...";
+            btnText.innerText = "Azeem Studio Processing...";
             btnLoader.classList.remove('hidden');
             audioContainer.classList.add('hidden');
             downloadSection.classList.add('hidden');
             errorDisplay.innerHTML = "";
 
             try {
-                // Must use gemini-2.5-flash-preview-09-2025
+                // Fixed Model and URL
                 const model = "gemini-2.5-flash-preview-09-2025";
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-                const prompt = currentMode === 'clone' 
-                    ? `Clone this voice and speak: ${text}`
-                    : `Speak this cheerfully: ${text}`;
+                
+                // Constructing logic for the prompt
+                let promptText = `Speak this precisely: "${text}"`;
+                if (styleSelect.value !== 'neutral') {
+                    promptText = `Say this in a ${styleSelect.value} tone: "${text}"`;
+                }
 
                 const payload = {
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
+                    contents: [{ parts: [{ text: promptText }] }],
                     generationConfig: {
-                        responseModalities: ["AUDIO"]
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: voiceSelect.value }
+                            }
+                        }
                     }
                 };
 
-                // Add TTS specific config if needed
-                if (currentMode !== 'clone') {
-                    payload.generationConfig.speechConfig = {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName: voiceSelect.value }
-                        }
-                    };
-                } else if (voiceUpload.files[0]) {
-                    const audioData = await fileToBase64(voiceUpload.files[0]);
+                // Add cloning logic if mode is set
+                if (currentMode === 'clone' && voiceUpload.files[0]) {
+                    const audioBase64 = await fileToBase64(voiceUpload.files[0]);
                     payload.contents[0].parts.push({
                         inlineData: {
                             mimeType: voiceUpload.files[0].type,
-                            data: audioData
+                            data: audioBase64
                         }
                     });
+                    delete payload.generationConfig.speechConfig; // Don't use prebuilt if cloning
                 }
 
                 const response = await fetch(url, {
@@ -239,30 +233,23 @@ YPE html>
                 });
 
                 if (!response.ok) {
-                    const err = await response.json().catch(() => ({}));
-                    throw new Error(err.error?.message || `API Error: ${response.status}`);
+                    const errorDetails = await response.json().catch(() => ({}));
+                    throw new Error(errorDetails.error?.message || `Network error (${response.status})`);
                 }
 
-                const data = await response.json();
-                const audioPart = data.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+                const result = await response.json();
+                const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                
+                if (!audioPart) throw new Error("Audio content generate nahi ho saka. Text chota karke try karein.");
 
-                if (!audioPart) {
-                    throw new Error("No audio was generated. Please try shorter text.");
-                }
-
-                // Decode base64 to binary
-                const binary = atob(audioPart.data);
+                const binary = atob(audioPart.inlineData.data);
                 const bytes = new Uint8Array(binary.length);
-                for (let i = 0; i < binary.length; i++) {
-                    bytes[i] = binary.charCodeAt(i);
-                }
+                for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
 
-                // Convert PCM16 to WAV
-                const pcm16 = new Int16Array(bytes.buffer);
-                const wavBlob = pcmToWav(pcm16, 24000); // 24kHz standard
+                const pcmData = new Int16Array(bytes.buffer);
+                const wavBlob = pcmToWav(pcmData, 24000);
                 const audioUrl = URL.createObjectURL(wavBlob);
 
-                // Setup player
                 audioPlayer.src = audioUrl;
                 audioContainer.classList.remove('hidden');
                 audioContainer.classList.add('flex');
@@ -272,28 +259,33 @@ YPE html>
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
                     a.href = audioUrl;
-                    a.download = `ai_voice_${Date.now()}.wav`;
+                    a.download = `azeem_studio_${Date.now()}.wav`;
                     a.click();
                 };
 
-                audioPlayer.play();
+                audioPlayer.play().catch(err => console.log("Auto-play blocked"));
 
             } catch (err) {
-                console.error("Failed:", err);
+                console.error("Azeem Studio Error:", err);
+                
+                // Exponential backoff retry
                 if (retryCount < 5) {
-                    const backoff = Math.pow(2, retryCount) * 1000;
-                    btnText.innerText = `Retrying in ${backoff/1000}s...`;
-                    setTimeout(() => generateSpeech(retryCount + 1), backoff);
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    btnText.innerText = `Retrying in ${delay/1000}s...`;
+                    setTimeout(() => generateSpeech(retryCount + 1), delay);
                 } else {
                     errorDisplay.innerHTML = `
-                        <div class="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
+                        <div class="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-100 text-sm">
                             <strong>System Error:</strong> ${err.message}<br>
-                            <span class="text-xs opacity-70">Hint: Model might be busy or API key injection failed. Try refreshing the page.</span>
+                            <span class="text-xs opacity-70 italic">Tip: Page refresh karein aur check karein ke net sahi chal raha hai.</span>
                         </div>
                     `;
+                    generateBtn.disabled = false;
+                    btnText.innerText = "Generate AI Voice";
+                    btnLoader.classList.add('hidden');
                 }
             } finally {
-                if (retryCount >= 5 || !errorDisplay.innerHTML) {
+                if (!errorDisplay.innerHTML) {
                     generateBtn.disabled = false;
                     btnText.innerText = "Generate AI Voice";
                     btnLoader.classList.add('hidden');
@@ -301,10 +293,10 @@ YPE html>
             }
         }
 
-        generateBtn.onclick = () => generateSpeech();
-        textInput.oninput = () => {
+        generateBtn.addEventListener('click', () => generateSpeech());
+        textInput.addEventListener('input', () => {
             document.getElementById('charCount').innerText = `${textInput.value.length} / 5000 characters`;
-        };
+        });
     </script>
 </body>
 </html>
